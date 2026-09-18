@@ -99,3 +99,6 @@ k-ono-shoten|2023|10
 k-hijirian|2004|6
 k-tonneau|2022|10
 k-kokoru|2024|10
+f-hashigobar-pincho|2019|5
+f-shinjidai-fukushima|2024|5
+f-uotarian|2024|3

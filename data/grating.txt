@@ -124,3 +124,11 @@ k-aza|4.7|3
 k-yoshidori|3.6|39
 k-tonneau|4.1|8
 k-kokoru|5.0|3
+f-hashigobar-pincho|4.4|452
+f-katsuo-oendan|3.5|173
+f-tottsuan-fukushima|4.4|9
+f-shinjidai-fukushima|4.7|1898
+f-okkyagari|4.1|470
+f-uotarian|4.6|76
+f-blackstock|4.5|119
+f-naniwa-toku|4.1|16

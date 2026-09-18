@@ -179,7 +179,6 @@ header.top{position:sticky;top:0;z-index:1500}
     <h3 id="who-title">あなたは誰?</h3>
     <p>選ぶと、その色で「行きたい!」をつけられます。あとから右上で変えられます。</p>
     <div class="grid" id="who-grid"></div>
-    <button class="watch" id="who-watch">5人以外の方:見るだけ(選ばない)</button>
   </div>
 </div>
 
@@ -476,7 +475,7 @@ $('#who-grid').addEventListener('click', e => {
 });
 $('#who-modal').addEventListener('click', e => { if (e.target.id==='who-modal' && me) $('#who-modal').hidden = true; });
 $('#me-btn').addEventListener('click', openWho);
-$('#who-watch').addEventListener('click', () => { $('#who-modal').hidden = true; try { sessionStorage.setItem('hn-watch','1'); } catch(e){} });
+
 
 /* ---------- sync (Google Sheets via Apps Script) ---------- */
 function setSync(state, text){ const el=$('#sync'); el.className='sync '+state; $('#sync-t').textContent=text; }

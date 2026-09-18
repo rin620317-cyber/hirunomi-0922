@@ -122,3 +122,11 @@ k-aza|404
 k-yoshidori|404
 k-tonneau|404
 k-kokoru|200
+f-hashigobar-pincho|200
+f-katsuo-oendan|200
+f-tottsuan-fukushima|200
+f-shinjidai-fukushima|200
+f-okkyagari|200
+f-uotarian|200
+f-blackstock|200
+f-naniwa-toku|404
