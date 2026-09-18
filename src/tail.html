@@ -68,6 +68,18 @@ header.top{position:sticky;top:0;z-index:1500}
 .menu-links{display:flex;gap:8px;flex-wrap:wrap}
 .menu-links a{border:2px solid var(--ink);color:var(--ink);text-decoration:none;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:700}
 .menu-links a.menu-main{background:var(--ink);color:var(--ground)}
+/* 一覧の表示切替:店名だけ */
+.viewsw{margin-left:auto;align-self:center;border:1px solid var(--ink)!important;border-radius:999px;padding:3px 12px!important;font-size:12px!important;color:var(--ink)!important;background:var(--surface)!important}
+.viewsw[aria-pressed="true"]{background:var(--ink)!important;color:var(--ground)!important}
+.list.compact{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
+.list.compact .item{grid-template-columns:24px 1fr auto;padding:7px 9px;gap:0 7px;align-items:center}
+.list.compact .meta,.list.compact .one{display:none}
+.list.compact .num{grid-row:auto;width:22px;height:22px;font-size:11px}
+.list.compact .nm{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list.compact .rate{font-size:12px}.list.compact .rate small{display:none}
+.list.compact .who{grid-column:1/4;margin-top:4px}
+.list.compact .pp{font-size:0;padding:0 1px}
+.list.compact .pp i{margin:0}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -156,6 +168,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <button role="tab" id="tab-all" data-tab="all" aria-selected="true">一覧</button>
     <button role="tab" id="tab-mine" data-tab="mine" aria-selected="false">おれの行きたい <b id="mine-n">0</b></button>
     <button role="tab" id="tab-team" data-tab="team" aria-selected="false">みんなの行きたい <b id="team-n">0</b></button>
+    <button class="viewsw" id="view-sw" aria-pressed="false" title="一覧の表示を切り替える">店名だけ</button>
   </div>
   <div class="members" id="members" role="group" aria-label="メンバーで絞り込む" hidden></div>
   <div class="list" id="list"></div>
@@ -607,6 +620,11 @@ $('#list').addEventListener('click', e => {
   document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c.dataset.f==='all'));
   drawPins(); drawList();
 });
+// 一覧を「店名だけ」と「詳しく」で切り替える(この端末に記憶)
+let compact = !!store.get('hn-compact');
+function applyCompact(){ $('#list').classList.toggle('compact', compact); $('#view-sw').setAttribute('aria-pressed', compact); $('#view-sw').textContent = compact ? '詳しく表示' : '店名だけ'; }
+$('#view-sw').addEventListener('click', () => { compact = !compact; store.set('hn-compact', compact); applyCompact(); });
+applyCompact();
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
 $('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
 $('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
