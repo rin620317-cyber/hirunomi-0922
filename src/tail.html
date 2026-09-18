@@ -43,6 +43,15 @@ header.top{position:sticky;top:0;z-index:1500}
 :root[data-theme="dark"]{--lunch:#f2c230;--lunch-bg:#3a300a;--after:#ff8a4c;--after-bg:#3d2010}
 .pin.after,.num.after,.dot.a{background:var(--after)}
 .tag.after{background:var(--after-bg);color:var(--after)}
+/* メンバー別の絞り込み */
+.members{flex-shrink:0;display:flex;gap:6px;padding:0 16px 8px;overflow-x:auto;scrollbar-width:none}
+.members button{flex:0 0 auto;display:flex;align-items:center;gap:5px;border:1.5px solid var(--c,var(--ink));background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px 3px 4px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.members #mb-all{padding-left:10px}
+.members i{width:18px;height:18px;border-radius:50%;background:var(--c);color:#fff;font-style:normal;font-size:10px;display:grid;place-items:center}
+.members b{font-size:11px;color:var(--muted)}
+.members button[aria-pressed="true"]{background:var(--c,var(--ink));color:#fff}
+.members button[aria-pressed="true"] i{background:#fff;color:var(--c)}
+.members button[aria-pressed="true"] b{color:#fff}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -134,6 +143,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <button role="tab" id="tab-mine" data-tab="mine" aria-selected="false">わたしの行きたい <b id="mine-n">0</b></button>
     <button role="tab" id="tab-team" data-tab="team" aria-selected="false">みんなの行きたい <b id="team-n">0</b></button>
   </div>
+  <div class="members" id="members" role="group" aria-label="メンバーで絞り込む" hidden></div>
   <div class="list" id="list"></div>
   <div class="foot"><span id="foot"></span> <span class="sync" id="sync"><i></i><span id="sync-t"></span></span></div>
 </div>
@@ -209,7 +219,7 @@ const store = {
 
 let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukushima';
 let me = store.get('hn-me'); if (!COLOR[me]) me = null;
-let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '';
+let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '', who = null;
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
 // 地図の凡例のON/OFF(昼・夜は一覧にも効く。★・安は印だけ消す)
 let show = Object.assign({lunch:true, after:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
@@ -283,7 +293,7 @@ function visible(){
   const q = query.trim().toLowerCase();
   let list = AREAS[area].shops.filter(s => show[s.type] !== false && (showOut || s.fit!==false || tab!=='all') &&
     (tab!=='mine' || (me && wantsOf(s.id).includes(me))) &&
-    (tab!=='team' || wantsOf(s.id).length || pickOf(s.id)!==null) &&
+    (tab!=='team' || (who ? wantsOf(s.id).includes(who) : (wantsOf(s.id).length || pickOf(s.id)!==null))) &&
     (!q || [s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase().includes(q)) && (
     (filter==='yu' && yasuuma(s)) ||
     filter==='all' || s.type===filter ||
@@ -319,6 +329,13 @@ function rateHtml(s){
   return `<div class="rate"><small>評価 —</small></div>`;
 }
 
+// みんなの行きたいタブで、メンバーごとに絞り込むボタン
+function drawMembers(){
+  const el = $('#members'); el.hidden = tab !== 'team'; if (el.hidden) return;
+  const A = AREAS[area];
+  const cnt = n => A.shops.filter(s => wantsOf(s.id).includes(n)).length;
+  el.innerHTML = `<button id="mb-all" data-who="" aria-pressed="${!who}">全員</button>` + MEMBERS.map((m,i) => `<button id="mb-${i}" data-who="${esc(m.name)}" style="--c:${m.c}" aria-pressed="${who===m.name}"><i>${esc(INI[m.name])}</i>${esc(m.name)} <b>${cnt(m.name)}</b></button>`).join('');
+}
 function drawList(){
   const list = visible();
   $('#list').innerHTML = list.length ? list.map(s => {
@@ -331,9 +348,10 @@ function drawList(){
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
-  }).join('') : (tab==='mine' ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' ? '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>' : '<div class="empty">該当するお店がありません</div>');
+  }).join('') : (tab==='mine' ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「行きたい!」をつけていません。</div>' : '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>');
   const A = AREAS[area];
   $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
+  drawMembers();
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
   $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・昼過ぎ ${fit.filter(s=>s.type==='after').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
@@ -504,6 +522,7 @@ drawLegend();
   bar.addEventListener('keydown', e => { if (e.key==='ArrowUp'||e.key==='ArrowDown') { e.preventDefault(); const px = apply(wrap.getBoundingClientRect().height + (e.key==='ArrowUp'?-40:40)); store.set('hn-maph', px); } });
   bar.addEventListener('dblclick', () => { wrap.style.flexBasis = ''; wrap.style.minHeight = ''; store.set('hn-maph', null); map.invalidateSize(); });
 })();
+$('#members').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; who = b.dataset.who || null; drawPins(); drawList(); $('#list').scrollTop = 0; });
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
 $('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
 $('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
