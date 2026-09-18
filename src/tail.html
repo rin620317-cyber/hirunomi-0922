@@ -311,7 +311,7 @@ function visible(){
   let list = AREAS[area].shops.filter(s => show[s.type] !== false && (showOut || s.fit!==false || tab!=='all') &&
     (tab!=='mine' || (me && wantsOf(s.id).includes(me))) &&
     (tab!=='team' || (who ? wantsOf(s.id).includes(who) : (wantsOf(s.id).length || pickOf(s.id)!==null))) &&
-    (!q || [s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase().includes(q)) && (
+    (!q || (t => t.includes(q) || yomiHits(q).some(w => t.includes(w.toLowerCase())))([s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase())) && (
     (filter==='yu' && yasuuma(s)) ||
     filter==='all' || s.type===filter ||
     (filter==='want' && wantsOf(s.id).length) ||
@@ -534,6 +534,10 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 let qTimer; $('#q').addEventListener('input', e => { drawSugg(); clearTimeout(qTimer); qTimer = setTimeout(() => { query = e.target.value; drawPins(); drawList(); }, 150); });
 // 入力に合わせて候補を出す:お店の名前(押すとそのお店を開く)と、ジャンル・名物の言葉(押すとその言葉で絞り込み)
 const WORDS = ['唐揚げ','焼鳥','立ち飲み','刺身','餃子','おでん','串カツ','ワイン','日本酒','牡蠣','焼肉','ホルモン','たこ焼き','天ぷら','お好み焼き','中華','韓国','タイ料理','イタリアン','スペイン','ビストロ','海鮮','マグロ','ラム','ジンギスカン','焼きとん','麻婆豆腐','ハイボール','せんべろ','鍋','寿司','炉端','カレー','ステーキ','居酒屋','バル'];
+// ひらがなで打っても漢字の言葉が出るように読みを持たせる
+const YOMI = {'唐揚げ':'からあげ','焼鳥':'やきとり','立ち飲み':'たちのみ','刺身':'さしみ','餃子':'ぎょうざ','串カツ':'くしかつ','日本酒':'にほんしゅ','牡蠣':'かき','焼肉':'やきにく','天ぷら':'てんぷら','お好み焼き':'おこのみやき','中華':'ちゅうか','韓国':'かんこく','海鮮':'かいせん','麻婆豆腐':'まーぼーどうふ','寿司':'すし','炉端':'ろばた','鍋':'なべ','焼きとん':'やきとん','居酒屋':'いざかや','たこ焼き':'たこやき','ホルモン':'ほるもん','おでん':'おでん','ワイン':'わいん','ラム':'らむ','ジンギスカン':'じんぎすかん','カレー':'かれー','ステーキ':'すてーき','バル':'ばる','ハイボール':'はいぼーる','イタリアン':'いたりあん','スペイン':'すぺいん','ビストロ':'びすとろ','タイ料理':'たいりょうり','マグロ':'まぐろ','せんべろ':'せんべろ'};
+// 入力(ひらがな)から、読みが前方一致する漢字の言葉を返す
+function yomiHits(q){ const k = kana(q); return k.length < 2 ? [] : Object.keys(YOMI).filter(w => YOMI[w].startsWith(k)); }
 let suggIdx = -1;
 function kana(s){ return String(s||'').toLowerCase().replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)); }
 function hi(t, q){ const i = kana(t).indexOf(kana(q)); return i < 0 ? esc(t) : esc(t.slice(0,i)) + '<mark>' + esc(t.slice(i, i+q.length)) + '</mark>' + esc(t.slice(i+q.length)); }
@@ -544,7 +548,7 @@ function drawSugg(){
   const k = kana(q);
   const shops = AREAS[area].shops.filter(s => kana(s.name).includes(k)).slice(0, 5);
   const pool = WORDS.concat(AREAS[area].shops.flatMap(s => String(s.genre).split(/[・/]/)));
-  const words = [...new Set(pool)].filter(w => w && kana(w).includes(k) && AREAS[area].shops.some(s => kana([s.name,s.genre,s.must,s.catch,s.summary].join(' ')).includes(kana(w)))).slice(0, 5);
+  const words = [...new Set(pool)].filter(w => w && (kana(w).includes(k) || yomiHits(q).includes(w)) && AREAS[area].shops.some(s => kana([s.name,s.genre,s.must,s.catch,s.summary].join(' ')).includes(kana(w)))).slice(0, 5);
   const count = w => AREAS[area].shops.filter(s => kana([s.name,s.genre,s.must,s.catch,s.summary].join(' ')).includes(kana(w))).length;
   const html = shops.map(s => `<button role="option" data-shop="${s.id}"><span class="k">お店</span>${hi(s.name, q)}<small>${esc(s.genre)}</small></button>`).join('')
     + words.map(w => `<button role="option" data-word="${esc(w)}"><span class="k">ことば</span>${hi(w, q)}<small>${count(w)}店</small></button>`).join('');
