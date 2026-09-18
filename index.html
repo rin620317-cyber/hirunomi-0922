@@ -182,6 +182,10 @@ header.top{position:sticky;top:0;z-index:1500}
 .legend{flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 60px)}
 .legend button{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 8px;display:flex;align-items:center;gap:5px;font:inherit;font-size:11px;font-weight:700;color:var(--ink);cursor:pointer}
 .legend button[aria-pressed="false"]{opacity:.7;text-decoration:line-through;background:var(--ground);border-style:dashed;color:var(--muted)}
+/* 地図と一覧の境目の調整バー */
+.resizer{flex-shrink:0;height:18px;margin:2px 16px 0;display:grid;place-items:center;cursor:row-resize;touch-action:none;user-select:none}
+.resizer span{width:56px;height:6px;border-radius:3px;background:var(--line);box-shadow:inset 0 0 0 1px var(--muted)}
+.resizer:hover span,.resizer.drag span{background:var(--muted)}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -244,6 +248,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <div class="legend" role="group" aria-label="地図の表示切替(タップでON/OFF)"><button id="lg-lunch" data-lg="lunch" aria-pressed="true"><i class="dot l"></i>昼12時〜</button><button id="lg-night" data-lg="night" aria-pressed="true"><i class="dot n"></i>夜のみ</button><button id="lg-pick" data-lg="pick" aria-pressed="true">★ りんのイチオシ</button><button id="lg-yu" data-lg="yu" aria-pressed="true"><i class="yu-dot">安</i>安うま</button><button id="lg-ring" data-lg="ring" aria-pressed="true"><i class="ring-key"></i>駅から徒歩5分/10分</button></div>
     <div class="map-note" id="mapnote" hidden></div>
   </div>
+  <div class="resizer" id="resizer" role="separator" aria-orientation="horizontal" aria-label="地図と一覧の境目(上下にドラッグで大きさを変える)" tabindex="0"><span></span></div>
 
   <div class="filters" id="filters">
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
@@ -608,6 +613,19 @@ document.querySelectorAll('.legend button').forEach(b => b.addEventListener('cli
   if (k === 'ring') drawBase(); drawPins(); drawList();
 }));
 drawLegend();
+// 境目のバーを上下にドラッグして、地図と一覧の大きさを変える(大きさはこの端末に記憶)
+(function(){
+  const bar = $('#resizer'), wrap = document.querySelector('.mapwrap');
+  const apply = px => { const max = window.innerHeight - 260; px = Math.max(120, Math.min(max, px)); wrap.style.flexBasis = px + 'px'; wrap.style.minHeight = '0'; map.invalidateSize(); return px; };
+  const saved = store.get('hn-maph'); if (saved) apply(saved);
+  let startY = 0, startH = 0, dragging = false;
+  bar.addEventListener('pointerdown', e => { dragging = true; startY = e.clientY; startH = wrap.getBoundingClientRect().height; bar.setPointerCapture(e.pointerId); bar.classList.add('drag'); });
+  bar.addEventListener('pointermove', e => { if (dragging) apply(startH + e.clientY - startY); });
+  const end = () => { if (!dragging) return; dragging = false; bar.classList.remove('drag'); store.set('hn-maph', wrap.getBoundingClientRect().height); };
+  bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
+  bar.addEventListener('keydown', e => { if (e.key==='ArrowUp'||e.key==='ArrowDown') { e.preventDefault(); const px = apply(wrap.getBoundingClientRect().height + (e.key==='ArrowUp'?-40:40)); store.set('hn-maph', px); } });
+  bar.addEventListener('dblclick', () => { wrap.style.flexBasis = ''; wrap.style.minHeight = ''; store.set('hn-maph', null); map.invalidateSize(); });
+})();
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
 $('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
 $('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
