@@ -233,6 +233,14 @@ let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukush
 let me = store.get('hn-me'); if (!COLOR[me]) me = null;
 let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '', who = null;
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
+// りんの「行きたい」を最初から入れておく(各端末で1回だけ。あとで外した店は戻さない)
+const DEFAULT_WANTS = {'りん': ['f-jack','f-yuji','f-shibireya','f-santoku','f-atariya-shokudo','k-tamaki']};
+if (!store.get('hn-seed-v1')) {
+  for (const [name, ids] of Object.entries(DEFAULT_WANTS)) for (const id of ids) {
+    const cur = new Set(shared.wants[id] || []); cur.add(name); shared.wants[id] = [...cur];
+  }
+  store.set('hn-shared', shared); store.set('hn-seed-v1', true);
+}
 // 地図の凡例のON/OFF(昼・夜は一覧にも効く。★・安は印だけ消す)
 let show = Object.assign({lunch:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
 show.ring = true;  // 徒歩圏の円は常に表示(切替ボタンはなくした)
