@@ -178,6 +178,10 @@ header.top{position:sticky;top:0;z-index:1500}
 .pin-yu,.yu-dot{position:absolute;left:-10px;top:-8px;width:17px;height:17px;border-radius:50%;background:#0ca678;color:#fff;font-size:10px;font-weight:700;font-style:normal;display:grid;place-items:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
 .yu-dot{position:static;display:inline-grid;width:15px;height:15px;font-size:9px;border:0;box-shadow:none}
 .ring-key{width:12px;height:12px;border-radius:50%;border:1.5px dashed #2f6fdd;background:rgba(47,111,221,.15);display:inline-block}
+/* 凡例はタップでON/OFF */
+.legend{flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 60px)}
+.legend button{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 8px;display:flex;align-items:center;gap:5px;font:inherit;font-size:11px;font-weight:700;color:var(--ink);cursor:pointer}
+.legend button[aria-pressed="false"]{opacity:.7;text-decoration:line-through;background:var(--ground);border-style:dashed;color:var(--muted)}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -237,7 +241,7 @@ header.top{position:sticky;top:0;z-index:1500}
 
   <div class="mapwrap">
     <div id="map" aria-label="地図"></div>
-    <div class="legend"><span><i class="dot l"></i>昼12時〜</span><span><i class="dot n"></i>夜のみ</span><span>★ りんのイチオシ</span><span><i class="yu-dot">安</i>安うま</span><span><i class="ring-key"></i>駅から徒歩5分/10分</span></div>
+    <div class="legend" role="group" aria-label="地図の表示切替(タップでON/OFF)"><button id="lg-lunch" data-lg="lunch" aria-pressed="true"><i class="dot l"></i>昼12時〜</button><button id="lg-night" data-lg="night" aria-pressed="true"><i class="dot n"></i>夜のみ</button><button id="lg-pick" data-lg="pick" aria-pressed="true">★ りんのイチオシ</button><button id="lg-yu" data-lg="yu" aria-pressed="true"><i class="yu-dot">安</i>安うま</button><button id="lg-ring" data-lg="ring" aria-pressed="true"><i class="ring-key"></i>駅から徒歩5分/10分</button></div>
     <div class="map-note" id="mapnote" hidden></div>
   </div>
 
@@ -324,6 +328,8 @@ let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukush
 let me = store.get('hn-me'); if (!COLOR[me]) me = null;
 let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '';
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
+// 地図の凡例のON/OFF(昼・夜は一覧にも効く。★・安は印だけ消す)
+let show = Object.assign({lunch:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
 
 /* ---------- map ---------- */
 const map = L.map('map', {zoomControl:true}).setView(AREAS[area].center, 16);
@@ -379,18 +385,20 @@ function toast(t){ const el=document.createElement('div'); el.className='toast';
 function drawBase(){
   base.clearLayers();
   const A = AREAS[area];
+  if (show.ring) {
   // 円は駅(中心)から歩いて5分(約400m)・10分(約800m)の範囲
   const lat0 = A.center[0], k = 1/111320;
   [[400,'駅から徒歩5分'],[800,'駅から徒歩10分']].forEach(([r,t]) => {
     L.circle(A.center, {radius:r, className:'ring', weight:1.5, dashArray:'4 5', fill:true, interactive:false}).addTo(base);
     L.marker([lat0 + r*k, A.center[1]], {icon:L.divIcon({className:'', html:`<span class="ring-lb">${t}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-200}).addTo(base);
   });
+  }
   (A.stations||[]).forEach(st => L.marker([st.lat,st.lng], {icon:L.divIcon({className:'', html:`<span class="stn">${esc(st.name)}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-100}).addTo(base));
 }
 
 function visible(){
   const q = query.trim().toLowerCase();
-  let list = AREAS[area].shops.filter(s => (showOut || s.fit!==false || tab!=='all') &&
+  let list = AREAS[area].shops.filter(s => show[s.type] !== false && (showOut || s.fit!==false || tab!=='all') &&
     (tab!=='mine' || (me && wantsOf(s.id).includes(me))) &&
     (tab!=='team' || wantsOf(s.id).length || pickOf(s.id)!==null) &&
     (!q || [s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase().includes(q)) && (
@@ -416,7 +424,7 @@ function drawPins(){
   visible().forEach(s => {
     if (s.lat==null) return;
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)?'<i class="pin-yu">安</i>':''}${pk?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
+    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
     const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
     m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
     m.on('click', () => select(s.id, false));
@@ -591,6 +599,15 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
   drawPins(); drawList(); $('#list').scrollTop = 0;
 }));
 let qTimer; $('#q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = e.target.value; drawPins(); drawList(); }, 150); });
+function drawLegend(){ document.querySelectorAll('.legend button').forEach(b => b.setAttribute('aria-pressed', show[b.dataset.lg] !== false)); }
+document.querySelectorAll('.legend button').forEach(b => b.addEventListener('click', e => {
+  e.stopPropagation();
+  const k = b.dataset.lg; show[k] = !show[k];
+  if (!show.lunch && !show.night) { show[k === 'lunch' ? 'night' : 'lunch'] = true; toast('昼と夜の両方は消せません'); }
+  store.set('hn-show', show); drawLegend();
+  if (k === 'ring') drawBase(); drawPins(); drawList();
+}));
+drawLegend();
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
 $('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
 $('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
