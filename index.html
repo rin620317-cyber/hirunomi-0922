@@ -158,6 +158,7 @@ dl.kv dd{margin:0}
 .chip.out{border-style:dashed}
 .tag.seat{border:1px solid currentColor;background:transparent}
 .tag.seat.stand{color:#b3541e}.tag.seat.seat{color:var(--muted)}.tag.seat.both{color:#7a6a00}
+.tag.p1{background:#d3f9d8;color:#1b6e2d}.tag.p2{background:#e6fcf5;color:#0b7285}.tag.p3{background:var(--warn-bg);color:var(--warn)}.tag.p4{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -224,6 +225,8 @@ dl.kv dd{margin:0}
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
     <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼12時〜OK</button>
     <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜のみ</button>
+    <button class="chip" id="f-p2" data-f="p2" aria-pressed="false">1人3,000円以内</button>
+    <button class="chip" id="f-p1" data-f="p1" aria-pressed="false">2,000円ではしご</button>
     <button class="chip" id="f-sit" data-f="sit" aria-pressed="false">座れる</button>
     <button class="chip" id="f-stand" data-f="stand" aria-pressed="false">立ち飲み</button>
     <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かが行きたい</button>
@@ -233,6 +236,7 @@ dl.kv dd{margin:0}
     <select class="sortsel" id="sort" aria-label="並び順">
       <option value="num">番号順</option>
       <option value="votes">行きたい人が多い順</option>
+      <option value="price">安い順</option>
       <option value="rate">評価が高い順</option>
       <option value="genre">ジャンル順</option>
     </select>
@@ -311,6 +315,17 @@ function full(v){
   return UNSURE.test(v) ? ASK + ' ' + esc(v) : esc(v);
 }
 const D922 = {ok:['ok','9/22営業見込み'], ask:['warn','9/22要問い合わせ'], ng:['ng','9/22休みの可能性大']};
+// 1人あたりの予算の目安から価格帯を出す(好み:1軒3,000円まで、ベストは2,000円で3〜4軒はしご)
+function priceOf(s){
+  const n = String(s.budget||'').replace(/,/g,'').match(/\d+/g);
+  if (!n) return null;
+  const lo = +n[0], hi = +(n[1] || n[0]);
+  if ((lo+hi)/2 <= 2000) return {k:'p1', t:'〜2,000円 はしご向き', lo, hi};
+  if (hi <= 3000) return {k:'p2', t:'〜3,000円', lo, hi};
+  if (lo < 3000)  return {k:'p3', t:'3,000円を超えることも', lo, hi};
+  return {k:'p4', t:'1人3,000円超', lo, hi};
+}
+function priceTag(s){ const p = priceOf(s); return p ? `<span class="tag ${p.k}">${p.t}</span>` : '<span class="tag warn">価格 要問い合わせ</span>'; }
 const SEAT = {stand:'立ち飲み', seat:'着席', both:'立ち飲み＋席'};
 function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.seat]}</span>` : '<span class="tag warn">立ち/席 要問い合わせ</span>'; }
 function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
@@ -335,10 +350,13 @@ function visible(){
     (filter==='want' && wantsOf(s.id).length) ||
     (filter==='pick' && pickOf(s.id)!==null) ||
     (filter==='open' && s.d922==='ok') ||
+    (filter==='p2' && priceOf(s) && ['p1','p2'].includes(priceOf(s).k)) ||
+    (filter==='p1' && priceOf(s) && priceOf(s).k==='p1') ||
     (filter==='sit' && (s.seat==='seat' || s.seat==='both')) ||
     (filter==='stand' && (s.seat==='stand' || s.seat==='both'))));
   const byPick = (a,b) => (pickOf(b.id)!==null) - (pickOf(a.id)!==null);
   if (sort==='votes') list = [...list].sort((a,b)=> wantsOf(b.id).length - wantsOf(a.id).length || byPick(a,b) || a.no-b.no);
+  if (sort==='price') list = [...list].sort((a,b)=> ((priceOf(a)||{hi:1e9}).hi - (priceOf(b)||{hi:1e9}).hi) || ((priceOf(a)||{lo:1e9}).lo - (priceOf(b)||{lo:1e9}).lo));
   if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
   if (sort==='genre') list = [...list].sort((a,b)=> a.genre.localeCompare(b.genre,'ja'));
   return list;
@@ -370,7 +388,7 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${seatTag(s)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -383,7 +401,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}`;
+  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}`;
   const score = [
     s.rating!=null ? `<div><div class="big"><span class="star">★</span>${s.rating.toFixed(1)}</div><div class="src">Google口コミ</div></div>` : '',
     s.tabelog ? `<div><div class="big">${esc(s.tabelog)}</div><div class="src">食べログ${s.reviews?`(口コミ${s.reviews}件)`:''}</div></div>`
