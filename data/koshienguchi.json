@@ -35,7 +35,9 @@
    "lng": 135.37254,
    "station": "JR甲子園口 徒歩4分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28013337/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.8,
+   "gReviews": 252
   },
   {
    "id": "k-ajipao",
@@ -61,7 +63,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28031189/",
    "fit": false,
    "why": "11席の餃子・中華食堂",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 184
   },
   {
    "id": "k-kojiro",
@@ -85,7 +89,9 @@
    "lng": 135.37499,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28070999/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 22
   },
   {
    "id": "k-tenteko",
@@ -109,7 +115,9 @@
    "lng": 135.3746,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28001349/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.8,
+   "gReviews": 197
   },
   {
    "id": "k-hanayashiki",
@@ -135,7 +143,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28036508/",
    "fit": false,
    "why": "定食中心の食堂",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.6,
+   "gReviews": 69
   },
   {
    "id": "k-kanteipou",
@@ -159,7 +169,9 @@
    "lng": 135.37405,
    "station": "JR甲子園口 徒歩3分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28056368/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.8,
+   "gReviews": 1436
   },
   {
    "id": "k-sakai",
@@ -185,7 +197,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28066189/",
    "fit": false,
    "why": "パスタランチ中心",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 32
   },
   {
    "id": "k-nature",
@@ -209,7 +223,9 @@
    "lng": 135.37399,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28006982/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 169
   },
   {
    "id": "k-macchi",
@@ -235,7 +251,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28052652/",
    "fit": false,
    "why": "カウンター10席で5人は難しい",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.7,
+   "gReviews": 64
   },
   {
    "id": "k-labrique",
@@ -261,7 +279,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28047562/",
    "fit": false,
    "why": "ハンバーグランチ中心・火曜は昼のみ",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 38
   },
   {
    "id": "k-butanosuke",
@@ -285,7 +305,9 @@
    "lng": 135.37439,
    "station": "JR甲子園口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28037888/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 40
   },
   {
    "id": "k-puja",
@@ -311,7 +333,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28027421/",
    "fit": false,
    "why": "カレー店",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.3,
+   "gReviews": 231
   },
   {
    "id": "k-ohsho",
@@ -337,7 +361,9 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28073839/",
    "fit": false,
    "why": "チェーンの中華食堂",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 2.9,
+   "gReviews": 67
   },
   {
    "id": "k-shoya",
@@ -361,7 +387,9 @@
    "lng": 135.37303,
    "station": "JR甲子園口 徒歩8分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28067583/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.6,
+   "gReviews": 55
   },
   {
    "id": "k-ebisumaru",
@@ -385,7 +413,9 @@
    "lng": 135.37454,
    "station": "JR甲子園口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28045127/",
-   "seat": "stand"
+   "seat": "stand",
+   "gRating": 4.5,
+   "gReviews": 53
   },
   {
    "id": "k-kojiro-tachi",
@@ -409,7 +439,9 @@
    "lng": 135.37482,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28073551/",
-   "seat": "stand"
+   "seat": "stand",
+   "gRating": 3.8,
+   "gReviews": 4
   },
   {
    "id": "k-seigiya",
@@ -433,7 +465,9 @@
    "lng": 135.37341,
    "station": "JR甲子園口 徒歩4分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28069151/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.7,
+   "gReviews": 35
   },
   {
    "id": "k-kakou",
@@ -457,7 +491,9 @@
    "lng": 135.37462,
    "station": "JR甲子園口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28047636/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.5,
+   "gReviews": 46
   },
   {
    "id": "k-koyama",
@@ -481,7 +517,9 @@
    "lng": 135.37538,
    "station": "JR甲子園口 徒歩3分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28003594/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 22
   },
   {
    "id": "k-chickenbal",
@@ -505,7 +543,9 @@
    "lng": 135.37468,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28033690/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.1,
+   "gReviews": 29
   },
   {
    "id": "k-tatsumi",
@@ -529,7 +569,9 @@
    "lng": 135.37575,
    "station": "JR甲子園口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28013686/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.1,
+   "gReviews": 49
   },
   {
    "id": "k-ajito",
@@ -553,7 +595,9 @@
    "lng": 135.3742,
    "station": "JR甲子園口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28057521/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.5,
+   "gReviews": 59
   },
   {
    "id": "k-yamiichi",
@@ -577,7 +621,9 @@
    "lng": 135.3738,
    "station": "JR甲子園口 徒歩5分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28023721/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.9,
+   "gReviews": 236
   },
   {
    "id": "k-meika",
@@ -601,7 +647,9 @@
    "lng": 135.37338,
    "station": "JR甲子園口 徒歩6分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28073513/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.3,
+   "gReviews": 7
   },
   {
    "id": "k-zakuro",
@@ -625,7 +673,9 @@
    "lng": 135.37378,
    "station": "JR甲子園口 徒歩5分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28039827/",
-   "seat": "stand"
+   "seat": "stand",
+   "gRating": 4.5,
+   "gReviews": 6
   },
   {
    "id": "k-wabisabi",
@@ -649,7 +699,9 @@
    "lng": 135.37562,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28046770/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.1,
+   "gReviews": 47
   },
   {
    "id": "k-enguchi",
@@ -673,7 +725,9 @@
    "lng": 135.37452,
    "station": "JR甲子園口 徒歩2分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28024423/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.1,
+   "gReviews": 38
   },
   {
    "id": "k-isshin",
@@ -697,7 +751,9 @@
    "lng": 135.37555,
    "station": "JR甲子園口 徒歩3分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28006274/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.3,
+   "gReviews": 46
   },
   {
    "id": "k-paradis",
@@ -721,7 +777,9 @@
    "lng": 135.37145,
    "station": "JR甲子園口 徒歩8分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28020331/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.8,
+   "gReviews": 45
   },
   {
    "id": "k-tamaki",
@@ -745,7 +803,9 @@
    "lng": 135.375153,
    "station": "JR甲子園口 北口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28058950/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.2,
+   "gReviews": 103
   },
   {
    "id": "k-masaya-kita",
@@ -769,7 +829,9 @@
    "lat": 34.739445,
    "lng": 135.374954,
    "station": "JR甲子園口 北口 徒歩1分",
-   "url": "https://tabelog.com/hyogo/A2803/A280301/28058919/"
+   "url": "https://tabelog.com/hyogo/A2803/A280301/28058919/",
+   "gRating": 3,
+   "gReviews": 80
   },
   {
    "id": "k-kayottei",
@@ -793,7 +855,9 @@
    "lat": 34.739296,
    "lng": 135.374695,
    "station": "JR甲子園口 北口 徒歩1分",
-   "url": "https://tabelog.com/hyogo/A2803/A280301/28059590/"
+   "url": "https://tabelog.com/hyogo/A2803/A280301/28059590/",
+   "gRating": 3.8,
+   "gReviews": 8
   },
   {
    "id": "k-barakamon",
@@ -817,7 +881,9 @@
    "lat": 34.739677,
    "lng": 135.37468,
    "station": "JR甲子園口 北口 徒歩2分",
-   "url": "https://tabelog.com/hyogo/A2803/A280301/28068881/"
+   "url": "https://tabelog.com/hyogo/A2803/A280301/28068881/",
+   "gRating": 3.8,
+   "gReviews": 5
   },
   {
    "id": "k-itsuki",
@@ -841,7 +907,9 @@
    "lat": 34.745735,
    "lng": 135.370102,
    "station": "JR甲子園口 北口 徒歩10分",
-   "url": "https://tabelog.com/hyogo/A2803/A280301/28034099/"
+   "url": "https://tabelog.com/hyogo/A2803/A280301/28034099/",
+   "gRating": 4.2,
+   "gReviews": 46
   },
   {
    "id": "k-tokidoki",
@@ -865,7 +933,9 @@
    "lat": 34.742378,
    "lng": 135.370163,
    "station": "JR甲子園口 北口 徒歩7分",
-   "url": "https://tabelog.com/hyogo/A2803/A280301/28056440/"
+   "url": "https://tabelog.com/hyogo/A2803/A280301/28056440/",
+   "gRating": 4.9,
+   "gReviews": 192
   },
   {
    "id": "k-dartmouth",
@@ -889,7 +959,9 @@
    "lat": 34.73966,
    "lng": 135.37525,
    "station": "JR甲子園口 北口 徒歩1分",
-   "url": "https://tabelog.com/hyogo/A2803/A280301/28038337/"
+   "url": "https://tabelog.com/hyogo/A2803/A280301/28038337/",
+   "gRating": 4.2,
+   "gReviews": 18
   },
   {
    "id": "k-okamoto",

@@ -45,7 +45,9 @@
    "lng": 135.48573,
    "station": "JR新福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27113904/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.5,
+   "gReviews": 291
   },
   {
    "id": "f-tonsaiya",
@@ -69,7 +71,9 @@
    "lng": 135.48593,
    "station": "JR新福島/福島 徒歩3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27015940/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.9,
+   "gReviews": 230
   },
   {
    "id": "f-harbird",
@@ -93,7 +97,9 @@
    "lng": 135.48784,
    "station": "JR福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27135136/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 133
   },
   {
    "id": "f-omori",
@@ -117,7 +123,9 @@
    "lng": 135.48666,
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27138272/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.5,
+   "gReviews": 337
   },
   {
    "id": "f-hana",
@@ -141,7 +149,9 @@
    "lng": 135.48631,
    "station": "JR福島/新福島 徒歩2〜3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27149082/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.8,
+   "gReviews": 245
   },
   {
    "id": "f-tenki",
@@ -165,7 +175,9 @@
    "lng": 135.48779,
    "station": "JR新福島 徒歩5分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27005165/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 444
   },
   {
    "id": "f-hands",
@@ -189,7 +201,9 @@
    "lng": 135.48653,
    "station": "JR福島 徒歩1分",
    "url": "https://www.fukushima-hands.jp/hirunomi.html",
-   "seat": null
+   "seat": null,
+   "gRating": 4.3,
+   "gReviews": 111
   },
   {
    "id": "f-toppuku",
@@ -213,7 +227,9 @@
    "lng": 135.48418,
    "station": "JR新福島 徒歩4分",
    "url": "https://retty.me/area/PRE27/ARE618/SUB8903/100001727448/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 116
   },
   {
    "id": "f-fukunotora",
@@ -239,7 +255,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27016742/",
    "fit": false,
    "why": "中華食堂寄り",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.9,
+   "gReviews": 146
   },
   {
    "id": "f-makino",
@@ -265,7 +283,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27002682/",
    "fit": false,
    "why": "蕎麦中心で祝日は昼のみ・16席で予約不可",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.3,
+   "gReviews": 428
   },
   {
    "id": "f-hairu",
@@ -289,7 +309,9 @@
    "lng": 135.48532,
    "station": "JR新福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27076081/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 209
   },
   {
    "id": "f-bokkoku",
@@ -313,7 +335,9 @@
    "lng": 135.48508,
    "station": "JR福島 徒歩3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27042259/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 525
   },
   {
    "id": "f-bonnechere",
@@ -339,7 +363,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27001080/",
    "fit": false,
    "why": "ランチセット中心で14:30まで",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.6,
+   "gReviews": 96
   },
   {
    "id": "f-velvet",
@@ -365,7 +391,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27074248/",
    "fit": false,
    "why": "洋食ランチ中心",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.2,
+   "gReviews": 243
   },
   {
    "id": "f-takoya",
@@ -389,7 +417,9 @@
    "lng": 135.48592,
    "station": "JR新福島 徒歩3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27104894/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 158
   },
   {
    "id": "f-nyama",
@@ -415,7 +445,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27130191/",
    "fit": false,
    "why": "昼はランチ中心(14時まで)",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 3.9,
+   "gReviews": 186
   },
   {
    "id": "f-lamb",
@@ -439,7 +471,9 @@
    "lng": 135.48682,
    "station": "JR新福島 徒歩3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27119000/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.4,
+   "gReviews": 179
   },
   {
    "id": "f-kudo",
@@ -463,7 +497,9 @@
    "lng": 135.4868,
    "station": "JR福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27120663/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.5,
+   "gReviews": 216
   },
   {
    "id": "f-oil",
@@ -489,7 +525,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27052335/",
    "fit": false,
    "why": "食事中心の麻婆豆腐の名店・17席で予約不可",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.2,
+   "gReviews": 1011
   },
   {
    "id": "f-gashin",
@@ -513,7 +551,9 @@
    "lng": 135.4877,
    "station": "阪神福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27108530/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.2,
+   "gReviews": 87
   },
   {
    "id": "f-kokure",
@@ -565,7 +605,9 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27103401/",
    "fit": false,
    "why": "1人1〜1.5万円のコース寄り",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.1,
+   "gReviews": 172
   },
   {
    "id": "f-santoku",
@@ -589,7 +631,9 @@
    "lng": 135.48772,
    "station": "阪神福島 徒歩3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27084630/",
-   "seat": "stand"
+   "seat": "stand",
+   "gRating": 4.3,
+   "gReviews": 284
   },
   {
    "id": "f-age",
@@ -613,7 +657,9 @@
    "lng": 135.48351,
    "station": "JR福島 徒歩5〜7分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27108946/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.4,
+   "gReviews": 94
   },
   {
    "id": "f-avant",
@@ -637,7 +683,9 @@
    "lng": 135.48805,
    "station": "阪神福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27104280/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.2,
+   "gReviews": 282
   },
   {
    "id": "f-jack",
@@ -661,7 +709,9 @@
    "lng": 135.48741,
    "station": "阪神福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27092474/",
-   "seat": "stand"
+   "seat": "stand",
+   "gRating": 4.3,
+   "gReviews": 540
   },
   {
    "id": "f-komemaru",
@@ -685,7 +735,9 @@
    "lng": 135.48396,
    "station": "JR福島 徒歩5分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27136948/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.2,
+   "gReviews": 106
   },
   {
    "id": "f-shotendo",
@@ -709,7 +761,9 @@
    "lng": 135.48328,
    "station": "JR福島 徒歩5分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27059277/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4,
+   "gReviews": 111
   },
   {
    "id": "f-urakingyo",
@@ -733,7 +787,9 @@
    "lng": 135.48659,
    "station": "JR新福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27105949/",
-   "seat": "seat"
+   "seat": "seat",
+   "gRating": 4.2,
+   "gReviews": 144
   },
   {
    "id": "f-jin",
@@ -757,7 +813,9 @@
    "lng": 135.48418,
    "station": "JR福島 徒歩5分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27086267/",
-   "seat": null
+   "seat": null,
+   "gRating": 4.3,
+   "gReviews": 185
   },
   {
    "id": "f-elalma",
@@ -781,7 +839,9 @@
    "lng": 135.48346,
    "station": "JR福島 徒歩5分",
    "url": "https://www.elalma-fukushima.com/drink.html",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 3.8,
+   "gReviews": 83
   },
   {
    "id": "f-yuji",
@@ -805,7 +865,417 @@
    "lng": 135.487289,
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27054826/",
-   "seat": "both"
+   "seat": "both",
+   "gRating": 4.1,
+   "gReviews": 210
+  },
+  {
+   "id": "f-atariya-shokudo",
+   "name": "立ち呑み あたりや食堂 福島店",
+   "genre": "立ち飲み・海鮮",
+   "type": "night",
+   "seat": "both",
+   "d922": "ok",
+   "hours": "毎日 15:00-24:00(L.O.23:30)",
+   "hoursShort": "15:00-24:00",
+   "holiday": "12/31-1/1のみ",
+   "holidayNote": "年中無休で祝日も15時から",
+   "summary": "産直の刺身盛りや、卓上で炙る活あわびが名物。日本酒もそろっていて、立ち飲みとしては刺身の質が高いと評判。人気店なので夕方からは混みやすい。",
+   "catch": "15時から刺身と地酒で飲める立ち飲み",
+   "must": "産直得盛り(刺身盛り)、活あわびの卓上炙り",
+   "budget": "¥2,000〜3,000",
+   "tips": "24席(カウンター10・テーブル14)。店内禁煙で屋外に喫煙所。ネット予約可(06-6485-8890)。【支払い】カード・交通系IC・PayPay等可",
+   "address": "大阪市福島区福島5-14-8",
+   "lat": 34.696835,
+   "lng": 135.48645,
+   "station": "JR福島 徒歩1分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27119157/",
+   "gRating": 4.2,
+   "gReviews": 252
+  },
+  {
+   "id": "f-tachinomi-komachi",
+   "name": "立呑み小町",
+   "genre": "立ち飲み・日本酒",
+   "type": "night",
+   "seat": "stand",
+   "d922": "ng",
+   "hours": "月-土 17:00-24:00(L.O.23:30)",
+   "hoursShort": "祝日定休",
+   "holiday": "日曜・祝日",
+   "holidayNote": "祝日は定休日なので9/22は休み",
+   "summary": "290円均一のつまみと安い揚げ物、日本酒が売りの活気ある立ち飲み。壁一面の手書きの品書きに季節のつまみが並ぶ。全席喫煙可なので煙が苦手な人には向かない。",
+   "catch": "290円のつまみで飲めるにぎやかな立ち飲み。※9/22は休み",
+   "must": "290円のつまみ、揚げ物",
+   "budget": "¥2,000〜3,000",
+   "tips": "立ち20名ほど。全席喫煙可。予約不可。【支払い】現金のみ",
+   "address": "大阪市福島区福島5-12-11",
+   "lat": 34.696297,
+   "lng": 135.485977,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27067793/",
+   "gRating": 3.8,
+   "gReviews": 86
+  },
+  {
+   "id": "f-donmaru-sakaba",
+   "name": "鈍○酒場(鈍まる酒場)",
+   "genre": "立ち飲み・揚げ物",
+   "type": "night",
+   "seat": "stand",
+   "d922": "ask",
+   "hours": "要問い合わせ",
+   "hoursShort": "要問い合わせ",
+   "holiday": "要問い合わせ",
+   "holidayNote": "営業時間がどこにも載っていない。電話(06-4797-3812)で確認を",
+   "summary": "唐揚げ・メンチカツ・ポテト・オムライスなど、安くて量の多いつまみが人気。常連が多くアットホームな雰囲気。全席喫煙可で、団体予約はできない。",
+   "catch": "唐揚げやメンチで安く飲める立ち飲み",
+   "must": "唐揚げ、メンチカツ",
+   "budget": "¥1,000〜2,000",
+   "tips": "立ち20名ほど。全席喫煙可。予約不可。【支払い】現金のみ",
+   "address": "大阪市福島区福島5-12-22",
+   "lat": 34.696323,
+   "lng": 135.486908,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27043039/",
+   "gRating": 4.1,
+   "gReviews": 36
+  },
+  {
+   "id": "f-vinoloco",
+   "name": "VinoLoco(ビノロコ)",
+   "genre": "ワイン酒場",
+   "type": "night",
+   "seat": "both",
+   "d922": "ok",
+   "hours": "火-木 18:00-24:00、金・祝前日 18:00-25:00、土 17:00-25:00、日祝 17:00-24:00",
+   "hoursShort": "祝 17:00-24:00",
+   "holiday": "不定休",
+   "holidayNote": "祝日も17時から営業と記載あり。不定休なので念のため確認を",
+   "summary": "グラスワインが500円からと手頃なワイン酒場。燻製・アヒージョ・パスタなど和洋のつまみが好評。12席と小さい店なので、5人なら予約したほうが安心。",
+   "catch": "グラス500円からのワイン酒場",
+   "must": "燻製盛り、アヒージョ",
+   "budget": "¥2,000〜3,000",
+   "tips": "12席(カウンター4・テーブル8)。全面禁煙。予約推奨(090-5687-9405)。【支払い】現金・PayPay",
+   "address": "大阪市福島区福島5-8-11",
+   "lat": 34.695972,
+   "lng": 135.487259,
+   "station": "阪神福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27067542/",
+   "gRating": 4.2,
+   "gReviews": 30
+  },
+  {
+   "id": "f-kiyorito",
+   "name": "4坪牡蠣小屋 キヨリト",
+   "genre": "立ち飲み・牡蠣",
+   "type": "night",
+   "seat": "stand",
+   "d922": "ok",
+   "hours": "毎日 16:00-24:00",
+   "hoursShort": "16:00-24:00",
+   "holiday": "無休",
+   "holidayNote": "毎日営業の記載あり",
+   "summary": "生牡蠣が1個200円前後と安く、焼き牡蠣や蒸し牡蠣も楽しめる。4坪の小さな店なので、5人だと詰めて立つ感じになる。",
+   "catch": "1個200円の牡蠣が食べられる4坪の立ち飲み",
+   "must": "生牡蠣、焼き牡蠣",
+   "budget": "¥1,500〜2,500",
+   "tips": "4坪の立ち飲み。予約不可。【支払い】カード・電子マネー・QR可",
+   "address": "大阪市福島区福島5-12-17",
+   "lat": 34.696373,
+   "lng": 135.48645,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27144360/",
+   "gRating": 4.7,
+   "gReviews": 89
+  },
+  {
+   "id": "f-gyoza-blues",
+   "name": "大衆酒場 餃子ブルース",
+   "genre": "大衆中華酒場・餃子",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-木 17:00-23:30、金・祝前日 17:00-24:00、土 15:00-24:00、祝日 15:00-23:30",
+   "hoursShort": "祝 15:00-23:30",
+   "holiday": "日曜(月曜が祝日なら営業)",
+   "holidayNote": "公式では祝日15時から営業。ただし月曜定休と書くサイトもあるので電話で確認を",
+   "summary": "国産豚の手包み餃子・水餃子・焼売のほか、唐揚げ・よだれ鶏などの中華つまみもそろう。ビールなど30種以上をセルフで飲み放題にできる。全席喫煙可で、実際の支払いは4,000円台になることもある。",
+   "catch": "手包み餃子と唐揚げ、セルフ飲み放題の大衆中華酒場",
+   "must": "手包み焼き餃子、水餃子、唐揚げ",
+   "budget": "¥2,500〜4,000",
+   "tips": "50席(2階は30席で貸切可)。全席喫煙可。予約可(06-7501-7898)。セルフ飲み放題は2時間1,650円(祝日1,980円)。【支払い】カード・電子マネー・PayPay可",
+   "address": "大阪市福島区福島5-10-14",
+   "lat": 34.695988,
+   "lng": 135.486038,
+   "station": "JR新福島 徒歩3分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27128926/",
+   "gRating": 4.2,
+   "gReviews": 36
+  },
+  {
+   "id": "f-taiyoken",
+   "name": "大洋軒",
+   "genre": "町中華・唐揚げ",
+   "type": "lunch",
+   "seat": "seat",
+   "d922": "ng",
+   "hours": "月-金 11:30-14:30/17:30-22:00、土 11:30-14:30",
+   "hoursShort": "祝日定休",
+   "holiday": "日曜・祝日",
+   "holidayNote": "祝日は定休日なので9/22は休み。唐揚げで有名な大衆中華の本命だが、この日は行けない",
+   "summary": "昭和40年創業の老舗町中華。外はザクザク、中はジューシーな唐揚げと、大盛りの『唐揚げマウンテン』で有名。夜は瓶ビールと唐揚げで飲める。16席と狭く、昼は行列ができる。",
+   "catch": "唐揚げマウンテンで有名な老舗の町中華。※9/22は休み",
+   "must": "鶏の唐揚げ(唐揚げマウンテン)",
+   "budget": "¥1,000〜2,000",
+   "tips": "16席(カウンター8・テーブル2卓)。昼は禁煙、夜は喫煙可。【支払い】現金のみ",
+   "address": "大阪市福島区福島5-13-1",
+   "lat": 34.696419,
+   "lng": 135.486847,
+   "station": "JR福島 徒歩1分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27005163/",
+   "gRating": 4.3,
+   "gReviews": 755
+  },
+  {
+   "id": "f-tokin",
+   "name": "TOKIN(トキン)",
+   "genre": "中華居酒屋・唐揚げ",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ng",
+   "hours": "月-金 11:30-12:40/17:30-23:00、土 17:30-21:00",
+   "hoursShort": "祝日定休",
+   "holiday": "日曜・祝日",
+   "holidayNote": "祝日は定休日なので9/22は休み",
+   "summary": "高架下の福ろうじ商店街にある、夫婦で営む町中華居酒屋。『唐揚げは必ず頼むべき』という口コミがあり、台湾風の餃子も評判。サントリーの生ビール認定店で、ビールがおいしい。",
+   "catch": "高架下で夫婦が営む、唐揚げが評判の町中華。※9/22は休み",
+   "must": "鶏もも唐揚げ、台湾風餃子",
+   "budget": "¥2,000〜3,000",
+   "tips": "24席(テーブルのみ)。一部喫煙可。予約可(06-6453-2137)。【支払い】カード(VISA/Master)・PayPay可",
+   "address": "大阪市福島区福島7-11-51",
+   "lat": 34.698292,
+   "lng": 135.486908,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27020317/",
+   "gRating": 4.3,
+   "gReviews": 29
+  },
+  {
+   "id": "f-daisangen",
+   "name": "大衆酒場 大三元 福島店",
+   "genre": "大衆酒場・たこ焼き・天ぷら",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "毎日 16:00-23:00",
+   "hoursShort": "16:00-23:00",
+   "holiday": "不定休",
+   "holidayNote": "祝日も同じ時間で営業と記載あり",
+   "summary": "2025年11月開店の大衆酒場で、創作たこ焼きと天ぷらが売り。1,500円の飲み放題があり、席数が多いので5人でも入りやすい。やや高くつくという声もある。",
+   "catch": "16時から。飲み放題1,500円の大箱大衆酒場",
+   "must": "創作たこ焼き、天ぷら",
+   "budget": "¥2,500〜4,000",
+   "tips": "77席。全席喫煙可。ネット予約可(06-6131-9469)。【支払い】カード・PayPay可",
+   "address": "大阪市福島区福島7-5-7",
+   "lat": 34.697006,
+   "lng": 135.48587,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27152468/",
+   "gRating": 4.4,
+   "gReviews": 9
+  },
+  {
+   "id": "f-gyoza-kacchan",
+   "name": "餃子のかっちゃん 大阪福島店",
+   "genre": "大衆居酒屋・餃子・唐揚げ",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-木 15:00-25:00、金 15:00-26:00、土日祝 13:00-26:00",
+   "hoursShort": "祝 13:00-26:00",
+   "holiday": "年中無休",
+   "holidayNote": "祝日は13時から(12時からと書くブログもあるので確認を)",
+   "summary": "昭和レトロな内装の大衆居酒屋。秘伝ダレに漬けた若鶏の唐揚げと手包み餃子が名物で、ハイボール99円からと飲み代がとても安い。全席喫煙可で、にぎやかな雰囲気。",
+   "catch": "祝日13時から。ハイボール99円、唐揚げと餃子の昭和レトロ酒場",
+   "must": "若鶏の唐揚げ、手包み餃子",
+   "budget": "¥2,000〜3,000",
+   "tips": "80席(個室・掘りごたつあり)。全席喫煙可。予約可(電話は14時以降)。飲み放題777円から。【支払い】カード可、QR・電子マネー不可",
+   "address": "大阪市福島区福島5-14-10",
+   "lat": 34.696934,
+   "lng": 135.486618,
+   "station": "JR福島 徒歩1分",
+   "url": "https://www.hotpepper.jp/strJ003365874/",
+   "gRating": 4.6,
+   "gReviews": 1931
+  },
+  {
+   "id": "f-bocchan",
+   "name": "焼き鳥おでん 坊っちゃん 大阪福島店",
+   "genre": "大衆酒場・焼鳥・おでん",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-金 15:00-26:00、土日祝 13:00-26:00",
+   "hoursShort": "祝 13:00-26:00",
+   "holiday": "年中無休",
+   "holidayNote": "祝日は13時から。このあたりで一番早く開く店",
+   "summary": "ドリンクが全品199円で、焼鳥は109円からと、とにかく安い大衆酒場。ハッピーアワーはレモンサワーやハイボールが50円。料理の質より、安く飲むのに向いた店。",
+   "catch": "祝日13時から。ドリンク全品199円",
+   "must": "坊っちゃん串(豚バラ厚切り)、おでん",
+   "budget": "¥2,000〜3,000",
+   "tips": "70席(1階28・2階42)。加熱式たばこのみ可。お通し代あり(06-6344-4136)。【支払い】カード可、電子決済不可",
+   "address": "大阪市福島区福島5-14-12",
+   "lat": 34.697037,
+   "lng": 135.486801,
+   "station": "JR福島 徒歩1分",
+   "url": "https://bocchanosakahukushima.owst.jp/",
+   "gRating": 4.5,
+   "gReviews": 259
+  },
+  {
+   "id": "f-masaya",
+   "name": "炭火焼鳥専門店 まさや 福島店",
+   "genre": "焼鳥",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-金・祝前日 17:00-25:00、土日祝 16:00-25:00",
+   "hoursShort": "祝 16:00-25:00",
+   "holiday": "不定休",
+   "holidayNote": "祝日は16時から。不定休なので念のため確認を",
+   "summary": "特製ニンニクだれが焼鳥にもキャベツにも合うと評判の炭火焼鳥店。ビールが200円前後と安い。80席と広く、5人でも入りやすい。",
+   "catch": "ニンニクだれで食べる炭火焼鳥。80席",
+   "must": "炭火焼鳥、ニンニクだれキャベツ",
+   "budget": "¥2,000〜3,000",
+   "tips": "80席。ネット予約可(06-6147-8215)。【支払い】カード・PayPay可",
+   "address": "大阪市福島区福島5-13-14",
+   "lat": 34.696571,
+   "lng": 135.486237,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27114927/",
+   "gRating": 3.9,
+   "gReviews": 99
+  },
+  {
+   "id": "f-hachimaru-kamaboko",
+   "name": "ハチマル蒲鉾 福島店",
+   "genre": "おでん・揚げ蒲鉾",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ask",
+   "hours": "月-金 17:00-24:00、日 14:00-22:00、土・祝は要問い合わせ",
+   "hoursShort": "要問い合わせ",
+   "holiday": "要問い合わせ",
+   "holidayNote": "祝日の営業時間の記載がない。ジャックとマチルダのすぐ隣",
+   "summary": "その場で揚げる揚げ蒲鉾と、自家製だしの創作おでんが人気。半熟卵黄入りの『ウッフ・ド・ロワイヤル』が名物。実際の支払いが5,000円前後になることもある。",
+   "catch": "揚げたての蒲鉾と創作おでん",
+   "must": "ウッフ・ド・ロワイヤル、揚げ蒲鉾",
+   "budget": "¥3,000〜5,000",
+   "tips": "32席(個室あり)。分煙。予約可(06-6458-8858)。【支払い】カード(JCB/AMEX/Diners)・PayPay可",
+   "address": "大阪市福島区福島5-6-13",
+   "lat": 34.696613,
+   "lng": 135.487274,
+   "station": "阪神福島 徒歩1分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27107218/",
+   "gRating": 4.4,
+   "gReviews": 196
+  },
+  {
+   "id": "f-joshow",
+   "name": "居酒屋 浄正",
+   "genre": "海鮮居酒屋",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ask",
+   "hours": "月-土 17:00-23:00",
+   "hoursShort": "要問い合わせ",
+   "holiday": "日曜",
+   "holidayNote": "祝日の営業は記載なし。電話(06-6455-7688)で確認を",
+   "summary": "隣の寿司店『すし好』の店主が仕入れる鮮魚を安く出す、路地裏の海鮮居酒屋。刺身盛りの評価が高く、常連が多い家庭的な雰囲気。全席喫煙可。",
+   "catch": "寿司店直送の刺身が安い路地裏の居酒屋",
+   "must": "刺身盛り合わせ",
+   "budget": "¥3,000〜4,000",
+   "tips": "44席(個室8名まで)。全席喫煙可。予約可。【支払い】カード可",
+   "address": "大阪市福島区福島5-11-7",
+   "lat": 34.696018,
+   "lng": 135.486237,
+   "station": "阪神福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27006414/",
+   "gRating": 4,
+   "gReviews": 64
+  },
+  {
+   "id": "f-tochu-hakku",
+   "name": "魚屋 十忠八九 福島本店",
+   "genre": "海鮮居酒屋・日本酒",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-木・日・祝 17:00-25:00、金土・祝前日 17:00-26:00",
+   "hoursShort": "祝 17:00-25:00",
+   "holiday": "無休",
+   "holidayNote": "祝日も17時から",
+   "summary": "口コミ600件超の人気海鮮居酒屋。海鮮ユッケ皿や生サーモンのレアフライなど、魚を使ったつまみが好評で、日本酒もそろう。人気店なので予約したほうがいい。",
+   "catch": "ふくまる通り57の人気の魚居酒屋",
+   "must": "海鮮ユッケ皿、生サーモンのレアフライ",
+   "budget": "¥3,000〜4,000",
+   "tips": "50席(テラス含む)。全面禁煙。予約可(06-6455-6611)。【支払い】カード・PayPay可",
+   "address": "大阪市福島区福島7-2-6",
+   "lat": 34.696358,
+   "lng": 135.485077,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27077333/",
+   "gRating": 4.2,
+   "gReviews": 500
+  },
+  {
+   "id": "f-hinge",
+   "name": "福島呑場ヒンジ",
+   "genre": "大衆酒場・ホルモン・串カツ",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-金・祝 17:00-25:00、土日 16:00-25:00",
+   "hoursShort": "祝 17:00-25:00",
+   "holiday": "なし",
+   "holidayNote": "祝日は平日と同じく17時から",
+   "summary": "名物のホルモン焼きに、たこ焼き11種、串カツ40種とつまみの種類が多い大衆酒場。2022年開店でまだ新しく、評価も安定している。全席禁煙。",
+   "catch": "ホルモン・たこ焼き・串カツがそろう大衆酒場。禁煙",
+   "must": "ホルモン焼き、串カツ",
+   "budget": "¥3,000〜4,000",
+   "tips": "42席。全席禁煙。予約可(06-6225-8234)。【支払い】カード・PayPay可",
+   "address": "大阪市福島区福島7-1-6",
+   "lat": 34.696957,
+   "lng": 135.486435,
+   "station": "JR福島 徒歩1分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27128656/",
+   "gRating": 4.4,
+   "gReviews": 424
+  },
+  {
+   "id": "f-iyasaka",
+   "name": "わら焼 鉄板焼 いやさか",
+   "genre": "わら焼き・海鮮居酒屋",
+   "type": "night",
+   "seat": "seat",
+   "d922": "ok",
+   "hours": "月-土 17:00-23:00、祝日 17:00-22:00",
+   "hoursShort": "祝 17:00-22:00",
+   "holiday": "日曜・年末年始",
+   "holidayNote": "祝日は短縮営業(17時-22時)",
+   "summary": "高知から直送のカツオを、わらで焼いたタタキが名物。わら焼きに合う日本酒がそろっている。80席と広く、予約も取りやすい。",
+   "catch": "高知直送のカツオのわら焼きタタキ",
+   "must": "カツオのわら焼きタタキ",
+   "budget": "¥3,000〜4,000",
+   "tips": "80席(個室あり)。全席禁煙。ネット予約可(06-6450-4441)。【支払い】カード・電子マネー可",
+   "address": "大阪市福島区福島7-7-3",
+   "lat": 34.697445,
+   "lng": 135.48558,
+   "station": "JR福島 徒歩2分",
+   "url": "https://tabelog.com/osaka/A2701/A270108/27101627/",
+   "gRating": 4.1,
+   "gReviews": 346
   }
  ]
 }

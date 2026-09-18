@@ -11,6 +11,18 @@
 .tag.seat{border:1px solid currentColor;background:transparent}
 .tag.seat.stand{color:#b3541e}.tag.seat.seat{color:var(--muted)}.tag.seat.both{color:#7a6a00}
 .tag.p1{background:#d3f9d8;color:#1b6e2d}.tag.p2{background:#e6fcf5;color:#0b7285}.tag.p3{background:var(--warn-bg);color:var(--warn)}.tag.p4{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.searchbar{flex-basis:100%}
+.searchbar input{width:100%;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px}
+.tabs{flex-shrink:0;display:flex;gap:4px;padding:0 16px 6px;border-bottom:1px solid var(--line);margin:0 16px 6px;padding-inline:0}
+.tabs button{border:0;background:none;font-weight:700;font-size:13px;color:var(--muted);padding:6px 10px;border-bottom:3px solid transparent;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tabs b{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;background:var(--ground);font-size:11px;color:var(--ink)}
+.tag.yu{background:#0ca678;color:#fff}
+.chip.yu[aria-pressed="true"]{box-shadow:inset 0 0 0 1px #0ca678;border-color:#0ca678;color:#0b7a5a}
+.pin.yu{border-color:#0ca678;border-width:3px}
+.pin-yu,.yu-dot{position:absolute;left:-10px;top:-8px;width:17px;height:17px;border-radius:50%;background:#0ca678;color:#fff;font-size:10px;font-weight:700;font-style:normal;display:grid;place-items:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.yu-dot{position:static;display:inline-grid;width:15px;height:15px;font-size:9px;border:0;box-shadow:none}
+.ring-key{width:12px;height:12px;border-radius:50%;border:1.5px dashed #2f6fdd;background:rgba(47,111,221,.15);display:inline-block}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -65,11 +77,12 @@
       <button id="area-fukushima" data-area="fukushima" aria-pressed="true">大阪・福島</button>
       <button id="area-koshienguchi" data-area="koshienguchi" aria-pressed="false">甲子園口</button>
     </div>
+    <div class="searchbar"><input id="q" type="search" placeholder="お店を検索(店名・料理・ジャンル 例:唐揚げ、牡蠣、立ち飲み)" aria-label="お店を検索" autocomplete="off"></div>
   </header>
 
   <div class="mapwrap">
     <div id="map" aria-label="地図"></div>
-    <div class="legend"><span><i class="dot l"></i>昼12時〜</span><span><i class="dot n"></i>夜のみ</span><span>★ りんのイチオシ</span></div>
+    <div class="legend"><span><i class="dot l"></i>昼12時〜</span><span><i class="dot n"></i>夜のみ</span><span>★ りんのイチオシ</span><span><i class="yu-dot">安</i>安うま</span><span><i class="ring-key"></i>駅から徒歩5分/10分</span></div>
     <div class="map-note" id="mapnote" hidden></div>
   </div>
 
@@ -77,6 +90,7 @@
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
     <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼12時〜OK</button>
     <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜のみ</button>
+    <button class="chip yu" id="f-yu" data-f="yu" aria-pressed="false">安 安うま</button>
     <button class="chip" id="f-p2" data-f="p2" aria-pressed="false">1人3,000円以内</button>
     <button class="chip" id="f-p1" data-f="p1" aria-pressed="false">2,000円ではしご</button>
     <button class="chip" id="f-sit" data-f="sit" aria-pressed="false">座れる</button>
@@ -92,6 +106,11 @@
       <option value="rate">評価が高い順</option>
       <option value="genre">ジャンル順</option>
     </select>
+  </div>
+  <div class="tabs" role="tablist" aria-label="一覧の切替">
+    <button role="tab" id="tab-all" data-tab="all" aria-selected="true">一覧</button>
+    <button role="tab" id="tab-mine" data-tab="mine" aria-selected="false">わたしの行きたい <b id="mine-n">0</b></button>
+    <button role="tab" id="tab-team" data-tab="team" aria-selected="false">みんなの行きたい <b id="team-n">0</b></button>
   </div>
   <div class="list" id="list"></div>
   <div class="foot"><span id="foot"></span> <span class="sync" id="sync"><i></i><span id="sync-t"></span></span></div>
@@ -133,6 +152,8 @@ const COLOR = Object.fromEntries(MEMBERS.map(m=>[m.name,m.c]));
 
 const AREAS = /*DATA_START*/{}/*DATA_END*/;
 // 30〜40代で飲んで食べる向きの店を先に、食事中心の店(fit:false)は後ろに回して番号をつける
+// 1人5,000円を上回る店(予算の目安の真ん中が5,000円超)は載せない
+for (const k in AREAS) AREAS[k].shops = AREAS[k].shops.filter(s => { const p = priceOf(s); return !p || (p.lo+p.hi)/2 <= 5000; });
 for (const k in AREAS) { AREAS[k].shops.sort((a,b)=>(a.fit===false)-(b.fit===false)); AREAS[k].shops.forEach((s,i)=>{ s.no = i+1; }); }
 
 const $ = s => document.querySelector(s);
@@ -144,7 +165,7 @@ const store = {
 
 let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukushima';
 let me = store.get('hn-me'); if (!COLOR[me]) me = null;
-let filter = 'all', sort = 'num', selId = null, showOut = false;
+let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '';
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
 
 /* ---------- map ---------- */
@@ -183,7 +204,9 @@ function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.
 function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
 function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
 function pickOf(id){ return Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
-function rateNum(s){ return s.rating ?? (s.tabelog ? parseFloat(s.tabelog) : null); }
+function rateNum(s){ return s.gRating ?? null; }
+// 安うま:Googleの評価4.3以上(口コミ20件以上)で、1人3,000円以内に収まる店
+function yasuuma(s){ const p = priceOf(s); return s.gRating >= 4.3 && (s.gReviews||0) >= 20 && p && (p.k==='p1' || p.k==='p2'); }
 function gmaps(s){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.name + ' ' + (s.address||'')); }
 function people(ns){ return ns.map(n=>`<span class="pp" style="background:${COLOR[n]}"><i></i>${esc(n)}</span>`).join(''); }
 function toast(t){ const el=document.createElement('div'); el.className='toast'; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),1800); }
@@ -192,12 +215,22 @@ function toast(t){ const el=document.createElement('div'); el.className='toast';
 function drawBase(){
   base.clearLayers();
   const A = AREAS[area];
-  [400,800].forEach(r => L.circle(A.center, {radius:r, className:'ring', weight:1.5, dashArray:'4 5', fill:false, interactive:false}).addTo(base));
+  // 円は駅(中心)から歩いて5分(約400m)・10分(約800m)の範囲
+  const lat0 = A.center[0], k = 1/111320;
+  [[400,'駅から徒歩5分'],[800,'駅から徒歩10分']].forEach(([r,t]) => {
+    L.circle(A.center, {radius:r, className:'ring', weight:1.5, dashArray:'4 5', fill:true, interactive:false}).addTo(base);
+    L.marker([lat0 + r*k, A.center[1]], {icon:L.divIcon({className:'', html:`<span class="ring-lb">${t}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-200}).addTo(base);
+  });
   (A.stations||[]).forEach(st => L.marker([st.lat,st.lng], {icon:L.divIcon({className:'', html:`<span class="stn">${esc(st.name)}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-100}).addTo(base));
 }
 
 function visible(){
-  let list = AREAS[area].shops.filter(s => (showOut || s.fit!==false) && (
+  const q = query.trim().toLowerCase();
+  let list = AREAS[area].shops.filter(s => (showOut || s.fit!==false || tab!=='all') &&
+    (tab!=='mine' || (me && wantsOf(s.id).includes(me))) &&
+    (tab!=='team' || wantsOf(s.id).length || pickOf(s.id)!==null) &&
+    (!q || [s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase().includes(q)) && (
+    (filter==='yu' && yasuuma(s)) ||
     filter==='all' || s.type===filter ||
     (filter==='want' && wantsOf(s.id).length) ||
     (filter==='pick' && pickOf(s.id)!==null) ||
@@ -219,7 +252,7 @@ function drawPins(){
   visible().forEach(s => {
     if (s.lat==null) return;
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}"><span>${s.no}</span></div>${pk?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}"></b>`).join('')}</div>`:''}</div>`;
+    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)?'<i class="pin-yu">安</i>':''}${pk?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}"></b>`).join('')}</div>`:''}</div>`;
     const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
     m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
     m.on('click', () => select(s.id, false));
@@ -227,8 +260,7 @@ function drawPins(){
 }
 
 function rateHtml(s){
-  if (s.rating!=null) return `<div class="rate"><span class="star">★</span>${s.rating.toFixed(1)}<small>Google</small></div>`;
-  if (s.tabelog) return `<div class="rate">${esc(s.tabelog)}<small>食べログ</small></div>`;
+  if (s.gRating!=null) return `<div class="rate"><span class="star">★</span>${s.gRating.toFixed(1)}<small>Google ${s.gReviews||0}件</small></div>`;
   return `<div class="rate"><small>評価 —</small></div>`;
 }
 
@@ -240,24 +272,25 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
-  }).join('') : '<div class="empty">該当するお店がありません</div>';
+  }).join('') : (tab==='mine' ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' ? '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>' : '<div class="empty">該当するお店がありません</div>');
   const A = AREAS[area];
+  $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
+  $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
-  $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼OK ${fit.filter(s=>s.type==='lunch').length}・夜のみ ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価は食べログ、${A.asof}時点の調べ。行く前に電話で確認を。`;
+  $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼OK ${fit.filter(s=>s.type==='lunch').length}・夜のみ ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
 }
 
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}`;
+  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}`;
   const score = [
-    s.rating!=null ? `<div><div class="big"><span class="star">★</span>${s.rating.toFixed(1)}</div><div class="src">Google口コミ</div></div>` : '',
-    s.tabelog ? `<div><div class="big">${esc(s.tabelog)}</div><div class="src">食べログ${s.reviews?`(口コミ${s.reviews}件)`:''}</div></div>`
-              : (s.rating==null ? `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">食べログ未掲載</div></div>` : ''),
+    s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
+                   : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
     s.budget ? `<div><div class="big" style="font-size:18px">${esc(s.budget)}</div><div class="src">予算の目安</div></div>` : ''
   ].join('');
   const mine = me && w.includes(me);
@@ -385,6 +418,13 @@ document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('clic
   document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c===b));
   drawPins(); drawList();
 }));
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.tab==='mine' && !me) { openWho(); return; }
+  tab = b.dataset.tab;
+  document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x===b));
+  drawPins(); drawList(); $('#list').scrollTop = 0;
+}));
+let qTimer; $('#q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = e.target.value; drawPins(); drawList(); }, 150); });
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
 $('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
 $('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
