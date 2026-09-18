@@ -1,8 +1,9 @@
 // 昼飲みマップ 9/22 — 「行きたい!」と「イチオシ」を保存するWebアプリ
-// スプレッドシートの［拡張機能］→［Apps Script］に貼り付けて、ウェブアプリとしてデプロイする
+// script.google.com の独立したプロジェクトに貼り付けて、ウェブアプリとしてデプロイする(SHEET_ID のシートに保存)
 
-const NAMES = ['いのぴー', 'まなごっち', 'たっちゃん', 'まっちょ', 'りん'];
+const NAMES = ['いのぴー', 'まなてぃ', 'たっちゃん', 'まっちょ', 'りん'];
 const OWNER = 'りん';
+const SHEET_ID = '18V_4waXDc9MOneN6Ez8uS0EkdAW_AUuYwj7BbYLhnFw';  // 昼飲みマップ 9/22 投票
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -10,7 +11,7 @@ function doGet(e) {
   const lock = LockService.getScriptLock();
   if (writing) lock.waitLock(10000);
   try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const ss = SpreadsheetApp.openById(SHEET_ID);
     const votes = sheet_(ss, 'votes', ['shop', 'who', 'updated']);
     const picks = sheet_(ss, 'picks', ['shop', 'comment', 'updated']);
 
