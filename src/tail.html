@@ -283,7 +283,6 @@ function drawBase(){
   const lat0 = A.center[0], k = 1/111320;
   [[400,'駅から徒歩5分'],[800,'駅から徒歩10分']].forEach(([r,t]) => {
     L.circle(A.center, {radius:r, className:'ring', weight:1.5, dashArray:'4 5', fill:true, interactive:false}).addTo(base);
-    L.marker([lat0 + r*k, A.center[1]], {icon:L.divIcon({className:'', html:`<span class="ring-lb">${t}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-200}).addTo(base);
   });
   }
   (A.stations||[]).forEach(st => L.marker([st.lat,st.lng], {icon:L.divIcon({className:'', html:`<span class="stn">${esc(st.name)}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-100}).addTo(base));
