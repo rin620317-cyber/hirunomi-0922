@@ -228,7 +228,9 @@
    "lat": 34.69688,
    "lng": 135.48724,
    "station": "JR福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27016742/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27016742/",
+   "fit": false,
+   "why": "中華食堂寄り"
   },
   {
    "id": "f-makino",
@@ -251,7 +253,9 @@
    "lat": 34.70017,
    "lng": 135.48966,
    "station": "JR福島 徒歩10分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27002682/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27002682/",
+   "fit": false,
+   "why": "蕎麦中心で祝日は昼のみ・16席で予約不可"
   },
   {
    "id": "f-hairu",
@@ -320,7 +324,9 @@
    "lat": 34.69627,
    "lng": 135.48807,
    "station": "阪神福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27001080/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27001080/",
+   "fit": false,
+   "why": "ランチセット中心で14:30まで"
   },
   {
    "id": "f-velvet",
@@ -343,7 +349,9 @@
    "lat": 34.69631,
    "lng": 135.48763,
    "station": "阪神福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27074248/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27074248/",
+   "fit": false,
+   "why": "洋食ランチ中心"
   },
   {
    "id": "f-takoya",
@@ -389,7 +397,9 @@
    "lat": 34.69419,
    "lng": 135.48514,
    "station": "JR新福島 徒歩2分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27130191/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27130191/",
+   "fit": false,
+   "why": "昼はランチ中心(14時まで)"
   },
   {
    "id": "f-lamb",
@@ -458,7 +468,9 @@
    "lat": 34.70161,
    "lng": 135.489,
    "station": "JR福島 徒歩8分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27052335/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27052335/",
+   "fit": false,
+   "why": "食事中心の麻婆豆腐の名店・17席で予約不可"
   },
   {
    "id": "f-gashin",
@@ -504,7 +516,9 @@
    "lat": 34.69513,
    "lng": 135.48857,
    "station": "阪神福島 徒歩2分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27114944/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27114944/",
+   "fit": false,
+   "why": "9席で5人は難しく、1人1万円前後"
   },
   {
    "id": "f-torio",
@@ -527,7 +541,9 @@
    "lat": 34.69441,
    "lng": 135.48691,
    "station": "JR新福島 徒歩2分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27103401/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27103401/",
+   "fit": false,
+   "why": "1人1〜1.5万円のコース寄り"
   },
   {
    "id": "f-santoku",

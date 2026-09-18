@@ -6,6 +6,8 @@
 .pp{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:999px;padding:0 8px 0 3px;color:#fff;line-height:18px}
 .pp i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.85)}
 .pick{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#8a5a00;background:#ffe59a;border-radius:4px;padding:0 7px}
+.tag.out{background:var(--ground);color:var(--muted);border:1px dashed var(--line)}
+.chip.out{border-style:dashed}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -75,6 +77,7 @@
     <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かが行きたい</button>
     <button class="chip" id="f-pick" data-f="pick" aria-pressed="false">★イチオシ</button>
     <button class="chip" id="f-open" data-f="open" aria-pressed="false">9/22営業見込み</button>
+    <button class="chip out" id="f-out" aria-pressed="false">食事中心の店も表示</button>
     <select class="sortsel" id="sort" aria-label="並び順">
       <option value="num">番号順</option>
       <option value="votes">行きたい人が多い順</option>
@@ -121,7 +124,8 @@ const OWNER = 'りん';
 const COLOR = Object.fromEntries(MEMBERS.map(m=>[m.name,m.c]));
 
 const AREAS = /*DATA_START*/{}/*DATA_END*/;
-for (const k in AREAS) AREAS[k].shops.forEach((s,i)=>{ s.no = i+1; });
+// 30〜40代で飲んで食べる向きの店を先に、食事中心の店(fit:false)は後ろに回して番号をつける
+for (const k in AREAS) { AREAS[k].shops.sort((a,b)=>(a.fit===false)-(b.fit===false)); AREAS[k].shops.forEach((s,i)=>{ s.no = i+1; }); }
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -132,7 +136,7 @@ const store = {
 
 let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukushima';
 let me = store.get('hn-me'); if (!COLOR[me]) me = null;
-let filter = 'all', sort = 'num', selId = null;
+let filter = 'all', sort = 'num', selId = null, showOut = false;
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
 
 /* ---------- map ---------- */
@@ -172,11 +176,11 @@ function drawBase(){
 }
 
 function visible(){
-  let list = AREAS[area].shops.filter(s =>
+  let list = AREAS[area].shops.filter(s => (showOut || s.fit!==false) && (
     filter==='all' || s.type===filter ||
     (filter==='want' && wantsOf(s.id).length) ||
     (filter==='pick' && pickOf(s.id)!==null) ||
-    (filter==='open' && s.d922==='ok'));
+    (filter==='open' && s.d922==='ok')));
   const byPick = (a,b) => (pickOf(b.id)!==null) - (pickOf(a.id)!==null);
   if (sort==='votes') list = [...list].sort((a,b)=> wantsOf(b.id).length - wantsOf(a.id).length || byPick(a,b) || a.no-b.no);
   if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
@@ -211,12 +215,13 @@ function drawList(){
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
       <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
-      <span class="one">${esc(s.catch||s.summary)}</span>
+      <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
   }).join('') : '<div class="empty">該当するお店がありません</div>';
   const A = AREAS[area];
-  $('#foot').textContent = `${A.label}:${A.shops.length}店(昼OK ${A.shops.filter(s=>s.type==='lunch').length}・夜のみ ${A.shops.filter(s=>s.type==='night').length})。評価は食べログ、${A.asof}時点の調べ。行く前に電話で確認を。`;
+  const fit = A.shops.filter(s=>s.fit!==false);
+  $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼OK ${fit.filter(s=>s.type==='lunch').length}・夜のみ ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価は食べログ、${A.asof}時点の調べ。行く前に電話で確認を。`;
 }
 
 function detail(s){
@@ -245,6 +250,7 @@ function detail(s){
     ${rinNote}
     ${vote}
     ${score?`<div class="score">${score}</div>`:''}
+    ${s.fit===false?`<div class="callout" style="background:var(--ground)"><b style="color:var(--muted)">30〜40代の飲み向けリストから除外:</b> ${esc(s.why)}</div>`:''}
     ${s.holidayNote?`<div class="callout"><b>9/22(祝)メモ:</b> ${esc(s.holidayNote)}</div>`:''}
     <p class="summary">${esc(s.summary)}</p>
     <dl class="kv">
@@ -346,9 +352,10 @@ $('#sh-body').addEventListener('click', e => {
 
 /* ---------- events ---------- */
 document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => setArea(b.dataset.area)));
-document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+$('#f-out').addEventListener('click', e => { showOut = !showOut; e.currentTarget.setAttribute('aria-pressed', showOut); drawPins(); drawList(); });
+document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => {
   filter = b.dataset.f;
-  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c===b));
+  document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c===b));
   drawPins(); drawList();
 }));
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
