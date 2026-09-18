@@ -111,23 +111,21 @@ header.top{position:sticky;top:0;z-index:1500}
 
   <div class="mapwrap">
     <div id="map" aria-label="地図"></div>
-    <div class="legend" role="group" aria-label="地図の表示切替(タップでON/OFF)"><button id="lg-lunch" data-lg="lunch" aria-pressed="true"><i class="dot l"></i>昼12時〜</button><button id="lg-after" data-lg="after" aria-pressed="true"><i class="dot a"></i>昼過ぎ〜</button><button id="lg-night" data-lg="night" aria-pressed="true"><i class="dot n"></i>夜(17時〜)</button><button id="lg-pick" data-lg="pick" aria-pressed="true">★ りんのイチオシ</button><button id="lg-yu" data-lg="yu" aria-pressed="true"><i class="yu-dot">安</i>安うま</button><button id="lg-ring" data-lg="ring" aria-pressed="true"><i class="ring-key"></i>駅から徒歩5分/10分</button></div>
+    <div class="legend" role="group" aria-label="地図の表示切替(タップでON/OFF)"><button id="lg-lunch" data-lg="lunch" aria-pressed="true"><i class="dot l"></i>昼(〜16:59開店)</button><button id="lg-night" data-lg="night" aria-pressed="true"><i class="dot n"></i>夜(17時〜開店)</button><button id="lg-yu" data-lg="yu" aria-pressed="true"><i class="yu-dot">安</i>安うま</button></div>
     <div class="map-note" id="mapnote" hidden></div>
   </div>
   <div class="resizer" id="resizer" role="separator" aria-orientation="horizontal" aria-label="地図と一覧の境目(上下にドラッグで大きさを変える)" tabindex="0"><span></span></div>
 
   <div class="filters" id="filters">
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
-    <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼12時〜OK</button>
-    <button class="chip" id="f-after" data-f="after" aria-pressed="false">昼過ぎ(13〜16時)〜</button>
-    <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜のみ(17時〜)</button>
+    <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼(〜16:59開店)</button>
+    <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜(17時〜開店)</button>
     <button class="chip yu" id="f-yu" data-f="yu" aria-pressed="false">安 安うま</button>
     <button class="chip" id="f-p2" data-f="p2" aria-pressed="false">1人3,000円以内</button>
     <button class="chip" id="f-p1" data-f="p1" aria-pressed="false">2,000円ではしご</button>
     <button class="chip" id="f-sit" data-f="sit" aria-pressed="false">座れる</button>
     <button class="chip" id="f-stand" data-f="stand" aria-pressed="false">立ち飲み</button>
     <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かが行きたい</button>
-    <button class="chip" id="f-pick" data-f="pick" aria-pressed="false">★イチオシ</button>
     <button class="chip" id="f-open" data-f="open" aria-pressed="false">9/22営業見込み</button>
     <button class="chip out" id="f-out" aria-pressed="false">食事中心の店も表示</button>
     <select class="sortsel" id="sort" aria-label="並び順">
@@ -186,7 +184,7 @@ const INI = Object.fromEntries(MEMBERS.map(m=>[m.name, m.ini || m.name[0]]));
 
 const AREAS = /*DATA_START*/{}/*DATA_END*/;
 // 30〜40代で飲んで食べる向きの店を先に、食事中心の店(fit:false)は後ろに回して番号をつける
-// 9/22(祝)の開店時刻から 昼(〜12時)/昼過ぎ(13〜16時台)/夜(17時〜) に分ける
+// 9/22(祝)の開店時刻から 昼(16:59までに開店)/夜(17時以降に開店) に分ける
 function openMin(s){
   const t = v => { const m = String(v||'').match(/(\d{1,2}):(\d{2})/); return m ? (+m[1])*60 + (+m[2]) : null; };
   const hs = s.hoursShort || '';
@@ -199,12 +197,10 @@ function openMin(s){
 function slotOf(s){
   const m = openMin(s);
   if (m == null) return s.type === 'lunch' ? 'lunch' : 'night';
-  if (m <= 12*60) return 'lunch';
-  if (m < 17*60) return 'after';
-  return 'night';
+  return m < 17*60 ? 'lunch' : 'night';  // 昼=16:59までに開店、夜=17時以降に開店
 }
-const SLOT = {lunch:'昼12時〜', after:'昼過ぎ〜(13〜16時)', night:'夜のみ(17時〜)'};
-const SLOT_SHORT = {lunch:'昼OK', after:'昼過ぎ〜', night:'夜のみ'};
+const SLOT = {lunch:'昼から開店(〜16:59)', night:'夜から開店(17時〜)'};
+const SLOT_SHORT = {lunch:'昼', night:'夜'};
 for (const k in AREAS) AREAS[k].shops.forEach(s => { s.type = slotOf(s); });
 // 1人5,000円を上回る店(予算の目安の真ん中が5,000円超)は載せない
 for (const k in AREAS) AREAS[k].shops = AREAS[k].shops.filter(s => { const p = priceOf(s); return !p || (p.lo+p.hi)/2 <= 5000; });
@@ -222,7 +218,8 @@ let me = store.get('hn-me'); if (!COLOR[me]) me = null;
 let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '', who = null;
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
 // 地図の凡例のON/OFF(昼・夜は一覧にも効く。★・安は印だけ消す)
-let show = Object.assign({lunch:true, after:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
+let show = Object.assign({lunch:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
+show.ring = true;  // 徒歩圏の円は常に表示(切替ボタンはなくした)
 
 /* ---------- map ---------- */
 const map = L.map('map', {zoomControl:true}).setView(AREAS[area].center, 16);
@@ -259,7 +256,9 @@ const SEAT = {stand:'立ち飲み', seat:'着席', both:'立ち飲み＋席'};
 function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.seat]}</span>` : '<span class="tag warn">立ち/席 要問い合わせ</span>'; }
 function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
 function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
-function pickOf(id){ return Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
+// ★りんのイチオシは「シンプルに」の要望で表示をやめた(データの仕組みは残してある)
+const PICKS_ON = false;
+function pickOf(id){ return PICKS_ON && Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
 function openedText(s){
   if (!s.year) return s.opened || null;
   // 2026年9月時点で何年目か(月が不明なら年の半ばとみなす)
@@ -342,7 +341,7 @@ function emptyHint(){
   if (tab==='team') why.push('「みんなの行きたい」タブ' + (who ? '(' + who + ')' : ''));
   if (filter!=='all') why.push('チップ「' + (document.querySelector('.chip[data-f="'+filter+'"]')?.textContent || '') + '」');
   if (query.trim()) why.push('検索「' + query.trim() + '」');
-  const off = ['lunch','after','night'].filter(k => show[k]===false).map(k => SLOT_SHORT[k]);
+  const off = ['lunch','night'].filter(k => show[k]===false).map(k => SLOT_SHORT[k]);
   if (off.length) why.push('地図の凡例で ' + off.join('・') + ' をOFF');
   if (!why.length) return '';
   return '<div class="empty">いま ' + why.map(esc).join(' ＋ ') + ' で絞り込み中です。<br><button class="sbtn" id="reset-all">絞り込みをすべて解除</button></div>';
@@ -365,7 +364,7 @@ function drawList(){
   drawMembers();
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
-  $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・昼過ぎ ${fit.filter(s=>s.type==='after').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
+  $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
 }
 
 function detail(s){
@@ -384,7 +383,7 @@ function detail(s){
       <div class="row">${MEMBERS.map(m=>`<span class="mem${w.includes(m.name)?' on':''}" style="--c:${m.c}"><i></i>${esc(m.name)}</span>`).join('')}</div>
     </div>`;
   const rinNote = pk!==null ? `<div class="rin"><b>★ りんのイチオシ</b>${pk?`<br>${esc(pk)}`:''}</div>` : '';
-  const rinEdit = me===OWNER ? `<div class="pickedit">
+  const rinEdit = PICKS_ON && me===OWNER ? `<div class="pickedit">
       <label for="pick-text" style="font-size:12px;font-weight:700">★ イチオシのひとこと(りんだけに表示される編集欄)</label>
       <textarea id="pick-text" maxlength="200" placeholder="例:ここの鶏刺しは絶対食べてほしい">${esc(pk||'')}</textarea>
       <div class="row"><button class="sbtn gold" id="pick-save">${pk!==null?'★ 更新する':'★ イチオシにする'}</button>${pk!==null?'<button class="sbtn" id="pick-del">イチオシを外す</button>':''}</div>
@@ -502,7 +501,7 @@ $('#f-out').addEventListener('click', e => { showOut = !showOut; e.currentTarget
 document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => {
   filter = b.dataset.f;
   // 時間帯のチップを押したら、凡例でOFFにしていてもその時間帯を表示に戻す
-  if (['lunch','after','night'].includes(filter) && show[filter] === false) { show[filter] = true; store.set('hn-show', show); drawLegend(); }
+  if (['lunch','night'].includes(filter) && show[filter] === false) { show[filter] = true; store.set('hn-show', show); drawLegend(); }
   document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c===b));
   drawPins(); drawList();
 }));
@@ -517,7 +516,7 @@ function drawLegend(){ document.querySelectorAll('.legend button').forEach(b => 
 document.querySelectorAll('.legend button').forEach(b => b.addEventListener('click', e => {
   e.stopPropagation();
   const k = b.dataset.lg; show[k] = !show[k];
-  if (!show.lunch && !show.after && !show.night) { show[k] = true; toast('昼・昼過ぎ・夜のすべては消せません'); }
+  if (!show.lunch && !show.night) { show[k] = true; toast('昼と夜の両方は消せません'); }
   store.set('hn-show', show); drawLegend();
   if (k === 'ring') drawBase(); drawPins(); drawList();
 }));
@@ -539,7 +538,7 @@ $('#members').addEventListener('click', e => { const b = e.target.closest('butto
 $('#list').addEventListener('click', e => {
   if (e.target.id !== 'reset-all') return;
   tab = 'all'; who = null; filter = 'all'; query = ''; $('#q').value = '';
-  show.lunch = show.after = show.night = true; store.set('hn-show', show); drawLegend();
+  show.lunch = show.night = true; store.set('hn-show', show); drawLegend();
   document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.tab==='all'));
   document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c.dataset.f==='all'));
   drawPins(); drawList();
