@@ -11,7 +11,12 @@
 .tag.seat{border:1px solid currentColor;background:transparent}
 .tag.seat.stand{color:#b3541e}.tag.seat.seat{color:var(--muted)}.tag.seat.both{color:#7a6a00}
 .tag.p1{background:#d3f9d8;color:#1b6e2d}.tag.p2{background:#e6fcf5;color:#0b7285}.tag.p3{background:var(--warn-bg);color:var(--warn)}.tag.p4{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+/* 検索バーを含む見出しは常に画面の上に固定 */
+header.top{position:sticky;top:0;z-index:1500}
+.app{overflow:hidden}
+@media (max-width:600px){.mapwrap{flex-basis:36%;min-height:200px}.list{min-height:180px}}
 .searchbar{flex-basis:100%}
+.watch{border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:8px;font-weight:700;cursor:pointer}
 .searchbar input{width:100%;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px}
 .tabs{flex-shrink:0;display:flex;gap:4px;padding:0 16px 6px;border-bottom:1px solid var(--line);margin:0 16px 6px;padding-inline:0}
 .tabs button{border:0;background:none;font-weight:700;font-size:13px;color:var(--muted);padding:6px 10px;border-bottom:3px solid transparent;cursor:pointer}
@@ -133,6 +138,7 @@
     <h3 id="who-title">あなたは誰?</h3>
     <p>選ぶと、その色で「行きたい!」をつけられます。あとから右上で変えられます。</p>
     <div class="grid" id="who-grid"></div>
+    <button class="watch" id="who-watch">5人以外の方:見るだけ(選ばない)</button>
   </div>
 </div>
 
@@ -364,6 +370,7 @@ $('#who-grid').addEventListener('click', e => {
 });
 $('#who-modal').addEventListener('click', e => { if (e.target.id==='who-modal' && me) $('#who-modal').hidden = true; });
 $('#me-btn').addEventListener('click', openWho);
+$('#who-watch').addEventListener('click', () => { $('#who-modal').hidden = true; try { sessionStorage.setItem('hn-watch','1'); } catch(e){} });
 
 /* ---------- sync (Google Sheets via Apps Script) ---------- */
 function setSync(state, text){ const el=$('#sync'); el.className='sync '+state; $('#sync-t').textContent=text; }
@@ -435,6 +442,7 @@ drawMe();
 setArea(area);
 if (API) { setSync('', '読み込み中…'); pull(); setInterval(() => { if (!document.hidden) pull(); }, 20000); }
 else setSync('', 'この端末だけに保存中(共有の設定前)');
-if (!me) openWho();
+let watching = false; try { watching = sessionStorage.getItem('hn-watch')==='1'; } catch(e){}
+if (!me && !watching) openWho();
 </script>
 </body></html>
