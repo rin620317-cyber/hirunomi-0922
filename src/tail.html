@@ -1,0 +1,365 @@
+/* people & votes */
+.me{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 6px;font-weight:700;font-size:13px;cursor:pointer}
+.me .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;background:var(--muted)}
+.who{display:flex;flex-wrap:wrap;gap:4px;grid-column:2/4}
+.pp{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:999px;padding:0 8px 0 3px;color:#fff;line-height:18px}
+.pp i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.85)}
+.pick{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#8a5a00;background:#ffe59a;border-radius:4px;padding:0 7px}
+.tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
+.tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.pin-wrap{position:relative;width:28px;height:28px}
+.pin-star{position:absolute;right:-9px;top:-10px;font-size:17px;line-height:1;color:#f5b300;text-shadow:0 0 2px #000,0 0 1px #000}
+.pin-dots{position:absolute;left:50%;top:31px;transform:translateX(-50%);display:flex;gap:1px}
+.pin-dots b{width:9px;height:9px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.4)}
+.vote{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.vote .row{display:flex;flex-wrap:wrap;gap:6px}
+.vbtn{border:2px solid var(--c);background:transparent;color:var(--c);border-radius:999px;padding:6px 16px;font-weight:700;cursor:pointer;font-size:14px}
+.vbtn[aria-pressed="true"]{background:var(--c);color:#fff}
+.mem{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
+.mem i{width:14px;height:14px;border-radius:50%;border:2px solid var(--c)}
+.mem.on{color:var(--ink)}.mem.on i{background:var(--c)}
+.rin{background:#fff6d6;color:#3d2e00;border-radius:8px;padding:8px 10px;font-size:13px}
+.rin b{color:#8a5a00}
+.pickedit{display:flex;flex-direction:column;gap:6px;border:1px dashed #d4a300;border-radius:10px;padding:10px 12px}
+.pickedit textarea{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--ground);color:var(--ink);resize:vertical;min-height:52px}
+.pickedit .row{display:flex;gap:8px;flex-wrap:wrap}
+.sbtn{border:1px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 14px;font-weight:700;cursor:pointer;font-size:13px}
+.sbtn.gold{background:#f5b300;border-color:#f5b300;color:#2a1f00}
+.sync{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.sync.live i{background:var(--good)}.sync.err i{background:var(--accent)}
+.modal{position:fixed;inset:0;z-index:3000;background:rgba(10,14,20,.5);display:grid;place-items:center;padding:16px}
+.modal .box{background:var(--surface);border-radius:14px;padding:18px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:12px}
+.modal h3{margin:0;font-size:17px}
+.modal p{margin:0;font-size:12.5px;color:var(--muted)}
+.modal .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal .grid button{border:2px solid var(--c);background:transparent;color:var(--ink);border-radius:10px;padding:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
+.modal .grid button i{width:16px;height:16px;border-radius:50%;background:var(--c)}
+.modal .grid button[aria-pressed="true"]{background:var(--c);color:#fff}
+.modal .grid button[aria-pressed="true"] i{background:#fff}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:4000;background:var(--ink);color:var(--ground);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700}
+
+@media (min-width:900px){
+  .mapwrap{flex-basis:52%}
+  .sheet{left:auto;right:24px;bottom:24px;top:auto;width:420px;border-radius:16px;border-bottom:1px solid var(--line);max-height:80%}
+}
+@media (prefers-reduced-motion:reduce){.sheet,.pin{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>昼飲みマップ</h1>
+      <span class="date"><b>9/22(火・祝)</b> 5人で昼飲み</span>
+    </div>
+    <button class="me" id="me-btn" aria-label="自分を選ぶ"><span class="av" id="me-av">?</span><span id="me-name">わたしは…</span></button>
+    <div class="seg" role="group" aria-label="エリア切替">
+      <button id="area-fukushima" data-area="fukushima" aria-pressed="true">大阪・福島</button>
+      <button id="area-koshienguchi" data-area="koshienguchi" aria-pressed="false">甲子園口</button>
+    </div>
+  </header>
+
+  <div class="mapwrap">
+    <div id="map" aria-label="地図"></div>
+    <div class="legend"><span><i class="dot l"></i>昼12時〜</span><span><i class="dot n"></i>夜のみ</span><span>★ りんのイチオシ</span></div>
+    <div class="map-note" id="mapnote" hidden></div>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
+    <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼12時〜OK</button>
+    <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜のみ</button>
+    <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かが行きたい</button>
+    <button class="chip" id="f-pick" data-f="pick" aria-pressed="false">★イチオシ</button>
+    <button class="chip" id="f-open" data-f="open" aria-pressed="false">9/22営業見込み</button>
+    <select class="sortsel" id="sort" aria-label="並び順">
+      <option value="num">番号順</option>
+      <option value="votes">行きたい人が多い順</option>
+      <option value="rate">評価が高い順</option>
+      <option value="genre">ジャンル順</option>
+    </select>
+  </div>
+  <div class="list" id="list"></div>
+  <div class="foot"><span id="foot"></span> <span class="sync" id="sync"><i></i><span id="sync-t"></span></span></div>
+</div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sh-title">
+  <div class="grab"></div>
+  <div class="hd">
+    <div>
+      <h2 id="sh-title"></h2>
+      <div class="sub" id="sh-sub"></div>
+    </div>
+    <button class="close" id="sh-close" aria-label="閉じる">✕</button>
+  </div>
+  <div class="bd" id="sh-body"></div>
+</div>
+
+<div class="modal" id="who-modal" hidden>
+  <div class="box" role="dialog" aria-labelledby="who-title">
+    <h3 id="who-title">あなたは誰?</h3>
+    <p>選ぶと、その色で「行きたい!」をつけられます。あとから右上で変えられます。</p>
+    <div class="grid" id="who-grid"></div>
+  </div>
+</div>
+
+<script>
+// ▼ Googleスプレッドシート(Apps Script)のWebアプリURL。空なら共有なし(この端末だけに保存)
+const API = '';
+
+const MEMBERS = [
+  {name:'いのぴー',  c:'#e03131'},
+  {name:'まなごっち', c:'#d6336c'},
+  {name:'たっちゃん', c:'#2f9e44'},
+  {name:'まっちょ',  c:'#0c8599'},
+  {name:'りん',      c:'#7048e8'}
+];
+const OWNER = 'りん';
+const COLOR = Object.fromEntries(MEMBERS.map(m=>[m.name,m.c]));
+
+const AREAS = /*DATA_START*/{}/*DATA_END*/;
+for (const k in AREAS) AREAS[k].shops.forEach((s,i)=>{ s.no = i+1; });
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukushima';
+let me = store.get('hn-me'); if (!COLOR[me]) me = null;
+let filter = 'all', sort = 'num', selId = null;
+let shared = store.get('hn-shared') || {wants:{}, picks:{}};
+
+/* ---------- map ---------- */
+const map = L.map('map', {zoomControl:true}).setView(AREAS[area].center, 16);
+L.control.scale({imperial:false, position:'bottomright'}).addTo(map);
+const base = L.layerGroup().addTo(map);
+const pins = L.layerGroup().addTo(map);
+let tilesOk = null;
+const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; OpenStreetMap contributors'});
+tiles.on('tileload', () => { tilesOk = true; $('#mapnote').hidden = true; });
+tiles.on('tileerror', () => { if (tilesOk) return; tilesOk = false; const n=$('#mapnote'); n.textContent='簡易マップ表示中(円=駅から徒歩5分/10分)。道順は各店の「Googleマップ」から'; n.hidden=false; });
+tiles.addTo(map);
+
+/* ---------- helpers ---------- */
+const UNSURE = /要確認|要問い合わせ|不明|未確認/;
+const ASK = '<span class="tag warn">要問い合わせ</span>';
+function short(v){ return (v==null || v==='' || UNSURE.test(v)) ? ASK : esc(v); }
+function full(v){
+  if (v==null || v==='' || /^要(確認|問い合わせ)$/.test(v)) return ASK;
+  return UNSURE.test(v) ? ASK + ' ' + esc(v) : esc(v);
+}
+const D922 = {ok:['ok','9/22営業見込み'], ask:['warn','9/22要問い合わせ'], ng:['ng','9/22休みの可能性大']};
+function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
+function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
+function pickOf(id){ return Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
+function rateNum(s){ return s.rating ?? (s.tabelog ? parseFloat(s.tabelog) : null); }
+function gmaps(s){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.name + ' ' + (s.address||'')); }
+function people(ns){ return ns.map(n=>`<span class="pp" style="background:${COLOR[n]}"><i></i>${esc(n)}</span>`).join(''); }
+function toast(t){ const el=document.createElement('div'); el.className='toast'; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),1800); }
+
+/* ---------- render ---------- */
+function drawBase(){
+  base.clearLayers();
+  const A = AREAS[area];
+  [400,800].forEach(r => L.circle(A.center, {radius:r, className:'ring', weight:1.5, dashArray:'4 5', fill:false, interactive:false}).addTo(base));
+  (A.stations||[]).forEach(st => L.marker([st.lat,st.lng], {icon:L.divIcon({className:'', html:`<span class="stn">${esc(st.name)}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-100}).addTo(base));
+}
+
+function visible(){
+  let list = AREAS[area].shops.filter(s =>
+    filter==='all' || s.type===filter ||
+    (filter==='want' && wantsOf(s.id).length) ||
+    (filter==='pick' && pickOf(s.id)!==null) ||
+    (filter==='open' && s.d922==='ok'));
+  const byPick = (a,b) => (pickOf(b.id)!==null) - (pickOf(a.id)!==null);
+  if (sort==='votes') list = [...list].sort((a,b)=> wantsOf(b.id).length - wantsOf(a.id).length || byPick(a,b) || a.no-b.no);
+  if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
+  if (sort==='genre') list = [...list].sort((a,b)=> a.genre.localeCompare(b.genre,'ja'));
+  return list;
+}
+
+function drawPins(){
+  pins.clearLayers();
+  visible().forEach(s => {
+    if (s.lat==null) return;
+    const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
+    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}"><span>${s.no}</span></div>${pk?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}"></b>`).join('')}</div>`:''}</div>`;
+    const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
+    m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
+    m.on('click', () => select(s.id, false));
+  });
+}
+
+function rateHtml(s){
+  if (s.rating!=null) return `<div class="rate"><span class="star">★</span>${s.rating.toFixed(1)}<small>Google</small></div>`;
+  if (s.tabelog) return `<div class="rate">${esc(s.tabelog)}<small>食べログ</small></div>`;
+  return `<div class="rate"><small>評価 —</small></div>`;
+}
+
+function drawList(){
+  const list = visible();
+  $('#list').innerHTML = list.length ? list.map(s => {
+    const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
+    return `<button class="item${s.id===selId?' sel':''}" id="it-${s.id}" data-id="${s.id}">
+      <span class="num ${s.type}">${s.no}</span>
+      <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
+      ${rateHtml(s)}
+      <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="one">${esc(s.catch||s.summary)}</span>
+      ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
+    </button>`;
+  }).join('') : '<div class="empty">該当するお店がありません</div>';
+  const A = AREAS[area];
+  $('#foot').textContent = `${A.label}:${A.shops.length}店(昼OK ${A.shops.filter(s=>s.type==='lunch').length}・夜のみ ${A.shops.filter(s=>s.type==='night').length})。評価は食べログ、${A.asof}時点の調べ。行く前に電話で確認を。`;
+}
+
+function detail(s){
+  const w = wantsOf(s.id), pk = pickOf(s.id);
+  $('#sh-title').textContent = s.name;
+  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${dayTag(s)} ${esc(s.station||'')}`;
+  const score = [
+    s.rating!=null ? `<div><div class="big"><span class="star">★</span>${s.rating.toFixed(1)}</div><div class="src">Google口コミ</div></div>` : '',
+    s.tabelog ? `<div><div class="big">${esc(s.tabelog)}</div><div class="src">食べログ${s.reviews?`(口コミ${s.reviews}件)`:''}</div></div>`
+              : (s.rating==null ? `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">食べログ未掲載</div></div>` : ''),
+    s.budget ? `<div><div class="big" style="font-size:18px">${esc(s.budget)}</div><div class="src">予算の目安</div></div>` : ''
+  ].join('');
+  const mine = me && w.includes(me);
+  const vote = `<div class="vote">
+      ${me ? `<div class="row"><button class="vbtn" id="vote-btn" style="--c:${COLOR[me]}" aria-pressed="${mine}">${mine?'✓ 行きたい!(取り消す)':'行きたい!'}</button></div>`
+           : `<div class="row"><button class="sbtn" id="vote-who">まず自分を選んで「行きたい!」をつける</button></div>`}
+      <div class="row">${MEMBERS.map(m=>`<span class="mem${w.includes(m.name)?' on':''}" style="--c:${m.c}"><i></i>${esc(m.name)}</span>`).join('')}</div>
+    </div>`;
+  const rinNote = pk!==null ? `<div class="rin"><b>★ りんのイチオシ</b>${pk?`<br>${esc(pk)}`:''}</div>` : '';
+  const rinEdit = me===OWNER ? `<div class="pickedit">
+      <label for="pick-text" style="font-size:12px;font-weight:700">★ イチオシのひとこと(りんだけに表示される編集欄)</label>
+      <textarea id="pick-text" maxlength="200" placeholder="例:ここの鶏刺しは絶対食べてほしい">${esc(pk||'')}</textarea>
+      <div class="row"><button class="sbtn gold" id="pick-save">${pk!==null?'★ 更新する':'★ イチオシにする'}</button>${pk!==null?'<button class="sbtn" id="pick-del">イチオシを外す</button>':''}</div>
+    </div>` : '';
+  $('#sh-body').innerHTML = `
+    ${rinNote}
+    ${vote}
+    ${score?`<div class="score">${score}</div>`:''}
+    ${s.holidayNote?`<div class="callout"><b>9/22(祝)メモ:</b> ${esc(s.holidayNote)}</div>`:''}
+    <p class="summary">${esc(s.summary)}</p>
+    <dl class="kv">
+      <dt>営業時間</dt><dd>${full(s.hours)}</dd>
+      <dt>定休日</dt><dd>${full(s.holiday)}</dd>
+      ${s.must?`<dt>名物</dt><dd>${esc(s.must)}</dd>`:''}
+      ${s.tips?`<dt>知っとく</dt><dd>${esc(s.tips).replace(/【支払い】/,'<br><b>支払い:</b>')}</dd>`:''}
+    </dl>
+    ${rinEdit}
+    <div class="links">
+      <a class="primary" href="${gmaps(s)}" target="_blank" rel="noopener">Googleマップで開く</a>
+      ${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">お店の情報</a>`:''}
+    </div>`;
+  $('#sheet').classList.add('open');
+}
+
+function redraw(){ drawPins(); drawList(); if (selId && $('#sheet').classList.contains('open')) { const s = AREAS[area].shops.find(x=>x.id===selId); const st = $('#sh-body').scrollTop; const ta = $('#pick-text'); const draft = ta && document.activeElement===ta ? ta.value : null; if (draft===null) { detail(s); $('#sh-body').scrollTop = st; } } }
+
+function select(id, fromList){
+  selId = id;
+  const s = AREAS[area].shops.find(x=>x.id===id);
+  drawPins(); drawList();
+  if (s.lat!=null) map.panTo([s.lat,s.lng], {animate:true});
+  if (!fromList) document.getElementById('it-'+id)?.scrollIntoView({block:'nearest', behavior:'smooth'});
+  detail(s); $('#sh-body').scrollTop = 0;
+}
+
+function setArea(a){
+  area = a; selId = null; store.set('hn-area', a);
+  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.area===a));
+  $('#sheet').classList.remove('open');
+  const A = AREAS[a];
+  drawBase(); drawPins(); drawList();
+  map.fitBounds(A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]), {padding:[30,30], maxZoom:17});
+  $('#list').scrollTop = 0;
+}
+
+/* ---------- who am I ---------- */
+function drawMe(){
+  $('#me-av').style.background = me ? COLOR[me] : '';
+  $('#me-av').textContent = me ? me[0] : '?';
+  $('#me-name').textContent = me || 'わたしは…';
+}
+function openWho(){
+  $('#who-grid').innerHTML = MEMBERS.map(m=>`<button id="who-${MEMBERS.indexOf(m)}" data-n="${esc(m.name)}" style="--c:${m.c}" aria-pressed="${me===m.name}"><i></i>${esc(m.name)}</button>`).join('');
+  $('#who-modal').hidden = false;
+}
+$('#who-grid').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  me = b.dataset.n; store.set('hn-me', me); $('#who-modal').hidden = true; drawMe(); redraw(); toast(`${me} として参加中`);
+});
+$('#who-modal').addEventListener('click', e => { if (e.target.id==='who-modal' && me) $('#who-modal').hidden = true; });
+$('#me-btn').addEventListener('click', openWho);
+
+/* ---------- sync (Google Sheets via Apps Script) ---------- */
+function setSync(state, text){ const el=$('#sync'); el.className='sync '+state; $('#sync-t').textContent=text; }
+async function call(params){
+  const u = API + '?' + new URLSearchParams(params).toString();
+  const r = await fetch(u, {redirect:'follow', cache:'no-store'});
+  if (!r.ok) throw new Error('HTTP '+r.status);
+  const j = await r.json(); if (j.error) throw new Error(j.error);
+  return j;
+}
+function apply(j){ shared = {wants:j.wants||{}, picks:j.picks||{}}; store.set('hn-shared', shared); redraw(); setSync('live', 'みんなと共有中'); }
+let busy = 0;
+async function pull(){
+  if (!API || busy) return;
+  try { apply(await call({action:'get'})); } catch(e){ setSync('err', '共有データを読めませんでした(電波を確認)'); }
+}
+async function push(params, optimistic){
+  optimistic(); store.set('hn-shared', shared); redraw();
+  if (!API) { setSync('', 'この端末だけに保存中(共有の設定前)'); return; }
+  busy++; setSync('', '保存中…');
+  try { const j = await call(params); busy--; apply(j); }
+  catch(e){ busy--; setSync('err', '保存できませんでした。もう一度押してください'); pull(); }
+}
+
+$('#sh-body').addEventListener('click', e => {
+  const s = AREAS[area].shops.find(x=>x.id===selId); if (!s) return;
+  if (e.target.id==='vote-who') { openWho(); return; }
+  if (e.target.id==='vote-btn') {
+    const on = !wantsOf(s.id).includes(me);
+    push({action:'vote', shop:s.id, who:me, on:on?'1':'0'}, () => {
+      const cur = new Set(shared.wants[s.id]||[]); on ? cur.add(me) : cur.delete(me); shared.wants[s.id] = [...cur];
+    });
+    toast(on ? `${me}:行きたい!` : '取り消しました');
+  }
+  if (e.target.id==='pick-save') {
+    const text = $('#pick-text').value.trim().slice(0,200);
+    $('#pick-text').blur();
+    push({action:'pick', shop:s.id, who:me, on:'1', comment:text}, () => { shared.picks[s.id] = text; });
+    toast('★ イチオシにしました');
+  }
+  if (e.target.id==='pick-del') {
+    push({action:'pick', shop:s.id, who:me, on:'0'}, () => { delete shared.picks[s.id]; });
+    toast('イチオシを外しました');
+  }
+});
+
+/* ---------- events ---------- */
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => setArea(b.dataset.area)));
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+  filter = b.dataset.f;
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c===b));
+  drawPins(); drawList();
+}));
+$('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
+$('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
+$('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') { if (!$('#who-modal').hidden && me) $('#who-modal').hidden = true; else $('#sh-close').click(); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) pull(); });
+
+drawMe();
+setArea(area);
+if (API) { setSync('', '読み込み中…'); pull(); setInterval(() => { if (!document.hidden) pull(); }, 20000); }
+else setSync('', 'この端末だけに保存中(共有の設定前)');
+if (!me) openWho();
+</script>
+</body></html>

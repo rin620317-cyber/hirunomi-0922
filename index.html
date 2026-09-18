@@ -228,6 +228,9 @@ function showNote(){
   n.hidden = false;
 }
 
+const UNSURE = /要確認|要問い合わせ|不明|未確認/;
+function unsure(v){ return v==null || v==='' || UNSURE.test(String(v)); }
+function val(v){ return unsure(v) ? '<span class="tag warn">要問い合わせ</span>' : esc(v); }
 function rateOf(s){ return s.rating ?? null; }
 function gmaps(s){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.name + ' ' + (s.address || '')); }
 
@@ -280,7 +283,7 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${esc(s.hoursShort||s.hours)}</span>
+      <span class="meta"><span class="tag ${s.type}">${s.type==='lunch'?'昼OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${val(s.hoursShort||s.hours)}</span>
       <span class="one">${esc(s.catch||s.summary)}</span>
     </button>`).join('') : '<div class="empty">該当するお店がありません</div>';
   const A = AREAS[area];
@@ -301,11 +304,10 @@ function detail(s){
     ${s.holidayNote?`<div class="callout"><b>9/22(祝)メモ:</b> ${esc(s.holidayNote)}</div>`:''}
     <p class="summary">${esc(s.summary)}</p>
     <dl class="kv">
-      <dt>営業時間</dt><dd>${esc(s.hours)}</dd>
-      <dt>定休日</dt><dd>${esc(s.holiday||'—')}</dd>
+      <dt>営業時間</dt><dd>${val(s.hours)}</dd>
+      <dt>定休日</dt><dd>${val(s.holiday)}</dd>
       ${s.must?`<dt>名物</dt><dd>${esc(s.must)}</dd>`:''}
       ${s.tips?`<dt>知っとく</dt><dd>${esc(s.tips)}</dd>`:''}
-      <dt>住所</dt><dd>${esc(s.address||'—')}</dd>
     </dl>
     <div class="links">
       <a class="primary" href="${gmaps(s)}" target="_blank" rel="noopener">Googleマップで開く</a>
