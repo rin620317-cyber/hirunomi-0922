@@ -799,7 +799,7 @@ $('#list').addEventListener('click', e => {
 });
 // 一覧を「店名だけ」と「詳しく」で切り替える(この端末に記憶)
 let compact = !!store.get('hn-compact');
-function applyCompact(){ $('#list').classList.toggle('compact', compact); $('#view-sw').setAttribute('aria-pressed', compact); $('#view-sw').textContent = compact ? '詳しく表示' : '店名だけ'; }
+function applyCompact(){ $('#list').classList.toggle('compact', compact); $('#view-sw').setAttribute('aria-pressed', compact); $('#view-sw').textContent = compact ? '詳細' : '店名だけ'; }
 $('#view-sw').addEventListener('click', () => { compact = !compact; store.set('hn-compact', compact); applyCompact(); });
 applyCompact();
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
