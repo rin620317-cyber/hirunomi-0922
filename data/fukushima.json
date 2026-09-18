@@ -44,7 +44,8 @@
    "lat": 34.69546,
    "lng": 135.48573,
    "station": "JR新福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27113904/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27113904/",
+   "seat": "both"
   },
   {
    "id": "f-tonsaiya",
@@ -67,7 +68,8 @@
    "lat": 34.696,
    "lng": 135.48593,
    "station": "JR新福島/福島 徒歩3分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27015940/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27015940/",
+   "seat": "seat"
   },
   {
    "id": "f-harbird",
@@ -90,7 +92,8 @@
    "lat": 34.69749,
    "lng": 135.48784,
    "station": "JR福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27135136/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27135136/",
+   "seat": "seat"
   },
   {
    "id": "f-omori",
@@ -113,7 +116,8 @@
    "lat": 34.69665,
    "lng": 135.48666,
    "station": "JR福島 徒歩2分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27138272/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27138272/",
+   "seat": "both"
   },
   {
    "id": "f-hana",
@@ -136,7 +140,8 @@
    "lat": 34.69612,
    "lng": 135.48631,
    "station": "JR福島/新福島 徒歩2〜3分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27149082/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27149082/",
+   "seat": "seat"
   },
   {
    "id": "f-tenki",
@@ -159,7 +164,8 @@
    "lat": 34.69354,
    "lng": 135.48779,
    "station": "JR新福島 徒歩5分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27005165/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27005165/",
+   "seat": "seat"
   },
   {
    "id": "f-hands",
@@ -182,7 +188,8 @@
    "lat": 34.69688,
    "lng": 135.48653,
    "station": "JR福島 徒歩1分",
-   "url": "https://www.fukushima-hands.jp/hirunomi.html"
+   "url": "https://www.fukushima-hands.jp/hirunomi.html",
+   "seat": null
   },
   {
    "id": "f-toppuku",
@@ -205,7 +212,8 @@
    "lat": 34.69624,
    "lng": 135.48418,
    "station": "JR新福島 徒歩4分",
-   "url": "https://retty.me/area/PRE27/ARE618/SUB8903/100001727448/"
+   "url": "https://retty.me/area/PRE27/ARE618/SUB8903/100001727448/",
+   "seat": "seat"
   },
   {
    "id": "f-fukunotora",
@@ -230,7 +238,8 @@
    "station": "JR福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27016742/",
    "fit": false,
-   "why": "中華食堂寄り"
+   "why": "中華食堂寄り",
+   "seat": "seat"
   },
   {
    "id": "f-makino",
@@ -255,7 +264,8 @@
    "station": "JR福島 徒歩10分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27002682/",
    "fit": false,
-   "why": "蕎麦中心で祝日は昼のみ・16席で予約不可"
+   "why": "蕎麦中心で祝日は昼のみ・16席で予約不可",
+   "seat": "seat"
   },
   {
    "id": "f-hairu",
@@ -278,7 +288,8 @@
    "lat": 34.69353,
    "lng": 135.48532,
    "station": "JR新福島 徒歩2分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27076081/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27076081/",
+   "seat": "seat"
   },
   {
    "id": "f-bokkoku",
@@ -301,7 +312,8 @@
    "lat": 34.69636,
    "lng": 135.48508,
    "station": "JR福島 徒歩3分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27042259/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27042259/",
+   "seat": "seat"
   },
   {
    "id": "f-bonnechere",
@@ -326,7 +338,8 @@
    "station": "阪神福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27001080/",
    "fit": false,
-   "why": "ランチセット中心で14:30まで"
+   "why": "ランチセット中心で14:30まで",
+   "seat": "seat"
   },
   {
    "id": "f-velvet",
@@ -351,7 +364,8 @@
    "station": "阪神福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27074248/",
    "fit": false,
-   "why": "洋食ランチ中心"
+   "why": "洋食ランチ中心",
+   "seat": "seat"
   },
   {
    "id": "f-takoya",
@@ -374,7 +388,8 @@
    "lat": 34.6939,
    "lng": 135.48592,
    "station": "JR新福島 徒歩3分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27104894/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27104894/",
+   "seat": "seat"
   },
   {
    "id": "f-nyama",
@@ -399,7 +414,8 @@
    "station": "JR新福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27130191/",
    "fit": false,
-   "why": "昼はランチ中心(14時まで)"
+   "why": "昼はランチ中心(14時まで)",
+   "seat": "seat"
   },
   {
    "id": "f-lamb",
@@ -422,7 +438,8 @@
    "lat": 34.69436,
    "lng": 135.48682,
    "station": "JR新福島 徒歩3分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27119000/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27119000/",
+   "seat": "seat"
   },
   {
    "id": "f-kudo",
@@ -445,7 +462,8 @@
    "lat": 34.69704,
    "lng": 135.4868,
    "station": "JR福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27120663/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27120663/",
+   "seat": "seat"
   },
   {
    "id": "f-oil",
@@ -470,7 +488,8 @@
    "station": "JR福島 徒歩8分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27052335/",
    "fit": false,
-   "why": "食事中心の麻婆豆腐の名店・17席で予約不可"
+   "why": "食事中心の麻婆豆腐の名店・17席で予約不可",
+   "seat": "seat"
   },
   {
    "id": "f-gashin",
@@ -493,7 +512,8 @@
    "lat": 34.69487,
    "lng": 135.4877,
    "station": "阪神福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27108530/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27108530/",
+   "seat": "seat"
   },
   {
    "id": "f-kokure",
@@ -518,7 +538,8 @@
    "station": "阪神福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27114944/",
    "fit": false,
-   "why": "9席で5人は難しく、1人1万円前後"
+   "why": "9席で5人は難しく、1人1万円前後",
+   "seat": "seat"
   },
   {
    "id": "f-torio",
@@ -543,7 +564,8 @@
    "station": "JR新福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27103401/",
    "fit": false,
-   "why": "1人1〜1.5万円のコース寄り"
+   "why": "1人1〜1.5万円のコース寄り",
+   "seat": "seat"
   },
   {
    "id": "f-santoku",
@@ -566,7 +588,8 @@
    "lat": 34.69511,
    "lng": 135.48772,
    "station": "阪神福島 徒歩3分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27084630/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27084630/",
+   "seat": "stand"
   },
   {
    "id": "f-age",
@@ -589,7 +612,8 @@
    "lat": 34.69882,
    "lng": 135.48351,
    "station": "JR福島 徒歩5〜7分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27108946/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27108946/",
+   "seat": "both"
   },
   {
    "id": "f-avant",
@@ -612,7 +636,8 @@
    "lat": 34.69624,
    "lng": 135.48805,
    "station": "阪神福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27104280/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27104280/",
+   "seat": "both"
   },
   {
    "id": "f-jack",
@@ -635,7 +660,8 @@
    "lat": 34.69636,
    "lng": 135.48741,
    "station": "阪神福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27092474/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27092474/",
+   "seat": "stand"
   },
   {
    "id": "f-komemaru",
@@ -658,7 +684,8 @@
    "lat": 34.69761,
    "lng": 135.48396,
    "station": "JR福島 徒歩5分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27136948/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27136948/",
+   "seat": "both"
   },
   {
    "id": "f-shotendo",
@@ -681,7 +708,8 @@
    "lat": 34.69773,
    "lng": 135.48328,
    "station": "JR福島 徒歩5分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27059277/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27059277/",
+   "seat": "seat"
   },
   {
    "id": "f-urakingyo",
@@ -704,7 +732,8 @@
    "lat": 34.695,
    "lng": 135.48659,
    "station": "JR新福島 徒歩1分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27105949/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27105949/",
+   "seat": "seat"
   },
   {
    "id": "f-jin",
@@ -727,7 +756,8 @@
    "lat": 34.69759,
    "lng": 135.48418,
    "station": "JR福島 徒歩5分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27086267/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27086267/",
+   "seat": null
   },
   {
    "id": "f-elalma",
@@ -750,7 +780,8 @@
    "lat": 34.69827,
    "lng": 135.48346,
    "station": "JR福島 徒歩5分",
-   "url": "https://www.elalma-fukushima.com/drink.html"
+   "url": "https://www.elalma-fukushima.com/drink.html",
+   "seat": "both"
   },
   {
    "id": "f-yuji",
@@ -773,7 +804,8 @@
    "lat": 34.698582,
    "lng": 135.487289,
    "station": "JR福島 徒歩2分",
-   "url": "https://tabelog.com/osaka/A2701/A270108/27054826/"
+   "url": "https://tabelog.com/osaka/A2701/A270108/27054826/",
+   "seat": "both"
   }
  ]
 }
