@@ -254,7 +254,8 @@
    "why": "カウンター10席で5人は難しい",
    "seat": "seat",
    "gRating": 4.7,
-   "gReviews": 64
+   "gReviews": 64,
+   "gq": "piatto match 甲子園口"
   },
   {
    "id": "k-labrique",
@@ -624,7 +625,8 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28023721/",
    "seat": "seat",
    "gRating": 3.9,
-   "gReviews": 236
+   "gReviews": 236,
+   "gq": "焼肉問屋闇市甲子園口店"
   },
   {
    "id": "k-meika",
@@ -676,7 +678,8 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28039827/",
    "seat": "stand",
    "gRating": 4.5,
-   "gReviews": 6
+   "gReviews": 6,
+   "gq": "タチノミ処ザクロ 甲子園口"
   },
   {
    "id": "k-wabisabi",
@@ -754,7 +757,8 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28006274/",
    "seat": "seat",
    "gRating": 4.3,
-   "gReviews": 46
+   "gReviews": 46,
+   "gq": "美味し炭火焼鶏処一心 甲子園口"
   },
   {
    "id": "k-paradis",
@@ -806,7 +810,8 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28058950/",
    "seat": "both",
    "gRating": 4.2,
-   "gReviews": 103
+   "gReviews": 103,
+   "yu": true
   },
   {
    "id": "k-masaya-kita",
@@ -832,7 +837,8 @@
    "station": "JR甲子園口 北口 徒歩1分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28058919/",
    "gRating": 3,
-   "gReviews": 80
+   "gReviews": 80,
+   "gq": "炭火焼鳥専門店まさや JR甲子園口駅の北側店"
   },
   {
    "id": "k-kayottei",
@@ -936,7 +942,8 @@
    "station": "JR甲子園口 北口 徒歩7分",
    "url": "https://tabelog.com/hyogo/A2803/A280301/28056440/",
    "gRating": 4.9,
-   "gReviews": 192
+   "gReviews": 192,
+   "gq": "tokidoki Slow Coffee & Wine Therapy"
   },
   {
    "id": "k-dartmouth",

@@ -25,6 +25,21 @@ if (fs.existsSync(yearsFile)) {
 }
 for (const a of Object.values(data)) for (const s of a.shops) if (yrs[s.id]) { s.year = yrs[s.id].y; s.month = yrs[s.id].m; }
 
+// 食べログのメニューページがあるか(data/menu-status.txt: id|HTTPステータス)
+const menuOk = {};
+const menuFile = path.join(dir, 'data', 'menu-status.txt');
+if (fs.existsSync(menuFile)) {
+  for (const line of fs.readFileSync(menuFile, 'utf8').split(/\r?\n/)) {
+    const [id, code] = line.trim().split('|');
+    if (id) menuOk[id] = code === '200';
+  }
+}
+for (const a of Object.values(data)) for (const s of a.shops) {
+  if (!/tabelog\.com/.test(s.url || '')) continue;
+  const u = s.url.endsWith('/') ? s.url : s.url + '/';
+  s.tlMenu = menuOk[s.id] ? u + 'dtlmenu/' : u + 'dtlphotolst/1/smp2/';
+  s.tlMenuLabel = menuOk[s.id] ? '食べログのメニュー表' : '食べログの料理写真';
+}
 const ids = new Set();
 for (const a of Object.values(data)) for (const s of a.shops) {
   if (ids.has(s.id)) throw new Error('duplicate id ' + s.id);

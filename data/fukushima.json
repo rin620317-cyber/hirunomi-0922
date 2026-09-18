@@ -99,7 +99,8 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27135136/",
    "seat": "seat",
    "gRating": 4.4,
-   "gReviews": 133
+   "gReviews": 133,
+   "gq": "鶏焼肉と自家製点心 福島はーばーど"
   },
   {
    "id": "f-omori",
@@ -125,7 +126,8 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27138272/",
    "seat": "both",
    "gRating": 4.5,
-   "gReviews": 337
+   "gReviews": 337,
+   "gq": "立呑み焼きとん 大森商店"
   },
   {
    "id": "f-hana",
@@ -151,7 +153,8 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27149082/",
    "seat": "seat",
    "gRating": 4.8,
-   "gReviews": 245
+   "gReviews": 245,
+   "gq": "炉端×寿司 裏福島Hana"
   },
   {
    "id": "f-tenki",
@@ -367,7 +370,8 @@
    "seat": "seat",
    "gRating": 4.6,
    "gReviews": 96,
-   "opened": "25年以上続く老舗"
+   "opened": "25年以上続く老舗",
+   "gq": "Cafe et Bistrot Bonne Chere 福島"
   },
   {
    "id": "f-velvet",
@@ -395,7 +399,8 @@
    "why": "洋食ランチ中心",
    "seat": "seat",
    "gRating": 4.2,
-   "gReviews": 243
+   "gReviews": 243,
+   "gq": "ヴェルベット ヴァーゴ 福島"
   },
   {
    "id": "f-takoya",
@@ -501,7 +506,8 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27120663/",
    "seat": "seat",
    "gRating": 4.5,
-   "gReviews": 216
+   "gReviews": 216,
+   "gq": "極薄ラムしゃぶ専門 工藤羊肉店 福島店"
   },
   {
    "id": "f-oil",
@@ -869,7 +875,8 @@
    "url": "https://tabelog.com/osaka/A2701/A270108/27054826/",
    "seat": "both",
    "gRating": 4.1,
-   "gReviews": 210
+   "gReviews": 210,
+   "gq": "せんべろゆうじ 福島6丁目3-8"
   },
   {
    "id": "f-atariya-shokudo",
@@ -941,7 +948,8 @@
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27043039/",
    "gRating": 4.1,
-   "gReviews": 36
+   "gReviews": 36,
+   "gq": "鈍◯酒場 福島店"
   },
   {
    "id": "f-vinoloco",
@@ -989,7 +997,8 @@
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27144360/",
    "gRating": 4.7,
-   "gReviews": 89
+   "gReviews": 89,
+   "gq": "4坪牡蠣小屋 キヨリト大阪福島店"
   },
   {
    "id": "f-gyoza-blues",
@@ -1087,7 +1096,8 @@
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27152468/",
    "gRating": 4.4,
-   "gReviews": 9
+   "gReviews": 9,
+   "gq": "大衆酒場 大三元 福島店 福島7丁目5-7"
   },
   {
    "id": "f-gyoza-kacchan",
@@ -1159,7 +1169,8 @@
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27114927/",
    "gRating": 3.9,
-   "gReviews": 99
+   "gReviews": 99,
+   "gq": "焼き鳥まさや 福島店 福島５丁目１３−１４"
   },
   {
    "id": "f-hachimaru-kamaboko",
@@ -1303,7 +1314,8 @@
    "station": "JR新福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27014207/",
    "gRating": 4.4,
-   "gReviews": 115
+   "gReviews": 115,
+   "gq": "立呑 ぽっぽ亭 福島2丁目9-22"
   },
   {
    "id": "f-nomanmaika",
@@ -1351,7 +1363,8 @@
    "station": "JR新福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27061535/",
    "gRating": 4.1,
-   "gReviews": 461
+   "gReviews": 461,
+   "gq": "多幸屋 本店 福島2丁目10-23"
   },
   {
    "id": "f-shamo",
@@ -1375,7 +1388,8 @@
    "station": "JR新福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27002375/",
    "gRating": 4.3,
-   "gReviews": 16
+   "gReviews": 16,
+   "gq": "闘鶏 福島店&アペタイト両面焼そば"
   },
   {
    "id": "f-budouya",
@@ -1519,7 +1533,8 @@
    "station": "JR新福島 徒歩3分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27157485/",
    "gRating": 4.8,
-   "gReviews": 63
+   "gReviews": 63,
+   "gq": "Ton Ton 福島店 福島2丁目7-5"
   },
   {
    "id": "f-aroichinchin",
