@@ -792,7 +792,7 @@ drawMe();
 setArea(area);
 if (API) { setSync('', '読み込み中…'); pull(); setInterval(() => { if (!document.hidden) pull(); }, 20000); }
 else setSync('', 'この端末だけに保存中(共有の設定前)');
-let watching = false; try { watching = sessionStorage.getItem('hn-watch')==='1'; } catch(e){}
-if (!me && !watching) openWho();
+// 初めて開いたとき(この端末でまだ名前を選んでいないとき)は、必ず「あなたは誰?」から始める。2回目以降は選んだ名前を覚えているので出さない
+if (!me) openWho();
 </script>
 </body></html>
