@@ -169,8 +169,8 @@ header.top{position:sticky;top:0;z-index:1500}
   </div>
   <div class="tabs" role="tablist" aria-label="一覧の切替">
     <button role="tab" id="tab-all" data-tab="all" aria-selected="true">一覧</button>
-    <button role="tab" id="tab-mine" data-tab="mine" aria-selected="false">おれの行きたい <b id="mine-n">0</b></button>
-    <button role="tab" id="tab-team" data-tab="team" aria-selected="false">みんなの行きたい <b id="team-n">0</b></button>
+    <button role="tab" id="tab-mine" data-tab="mine" aria-selected="false">おれ推し <b id="mine-n">0</b></button>
+    <button role="tab" id="tab-team" data-tab="team" aria-selected="false">みんな推し <b id="team-n">0</b></button>
     <button class="viewsw" id="view-sw" aria-pressed="false" title="一覧の表示を切り替える">店名だけ</button>
   </div>
   <div class="members" id="members" role="group" aria-label="メンバーで絞り込む" hidden></div>
@@ -385,7 +385,7 @@ function rateHtml(s){
   return `<div class="rate"><small>評価 —</small></div>`;
 }
 
-// みんなの行きたいタブで、メンバーごとに絞り込むボタン
+// みんな推しタブで、メンバーごとに絞り込むボタン
 function drawMembers(){
   const el = $('#members'); el.hidden = tab !== 'team'; if (el.hidden) return;
   const A = AREAS[area];
@@ -395,8 +395,8 @@ function drawMembers(){
 // 0件のときに、何で絞り込まれているかと解除ボタンを出す
 function emptyHint(){
   const why = [];
-  if (tab==='mine') why.push('「おれの行きたい」タブ');
-  if (tab==='team') why.push('「みんなの行きたい」タブ' + (who ? '(' + who + ')' : ''));
+  if (tab==='mine') why.push('「おれ推し」タブ');
+  if (tab==='team') why.push('「みんな推し」タブ' + (who ? '(' + who + ')' : ''));
   if (filter!=='all') why.push('チップ「' + (document.querySelector('.chip[data-f="'+filter+'"]')?.textContent || '') + '」');
   if (query.trim()) why.push('検索「' + query.trim() + '」');
   const off = ['lunch','night'].filter(k => show[k]===false).map(k => SLOT_SHORT[k]);
