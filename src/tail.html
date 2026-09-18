@@ -4,7 +4,7 @@
 .me .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;background:var(--muted)}
 .who{display:flex;flex-wrap:wrap;gap:4px;grid-column:2/4}
 .pp{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:999px;padding:0 8px 0 3px;color:#fff;line-height:18px}
-.pp i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.85)}
+.pp i{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--c);font-size:8px;font-style:normal;line-height:13px;text-align:center}
 .pick{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#8a5a00;background:#ffe59a;border-radius:4px;padding:0 7px}
 .tag.out{background:var(--ground);color:var(--muted);border:1px dashed var(--line)}
 .chip.out{border-style:dashed}
@@ -34,7 +34,7 @@ header.top{position:sticky;top:0;z-index:1500}
 .pin-wrap{position:relative;width:28px;height:28px}
 .pin-star{position:absolute;right:-9px;top:-10px;font-size:17px;line-height:1;color:#f5b300;text-shadow:0 0 2px #000,0 0 1px #000}
 .pin-dots{position:absolute;left:50%;top:31px;transform:translateX(-50%);display:flex;gap:1px}
-.pin-dots b{width:9px;height:9px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.4)}
+.pin-dots b{width:14px;height:14px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.4);color:#fff;font-size:8px;line-height:11px;text-align:center;font-weight:700}
 .vote{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .vote .row{display:flex;flex-wrap:wrap;gap:6px}
 .vbtn{border:2px solid var(--c);background:transparent;color:var(--c);border-radius:999px;padding:6px 16px;font-weight:700;cursor:pointer;font-size:14px}
@@ -151,11 +151,12 @@ const MEMBERS = [
   {name:'いのぴー',  c:'#e03131'},
   {name:'まなごっち', c:'#d6336c'},
   {name:'たっちゃん', c:'#2f9e44'},
-  {name:'まっちょ',  c:'#0c8599'},
+  {name:'まっちょ',  c:'#0c8599', ini:'M'},  // まなごっちと「ま」が重なるので M
   {name:'りん',      c:'#7048e8'}
 ];
 const OWNER = 'りん';
 const COLOR = Object.fromEntries(MEMBERS.map(m=>[m.name,m.c]));
+const INI = Object.fromEntries(MEMBERS.map(m=>[m.name, m.ini || m.name[0]]));
 
 const AREAS = /*DATA_START*/{}/*DATA_END*/;
 // 30〜40代で飲んで食べる向きの店を先に、食事中心の店(fit:false)は後ろに回して番号をつける
@@ -215,7 +216,7 @@ function rateNum(s){ return s.gRating ?? null; }
 // 安うま:Googleの評価4.3以上(口コミ20件以上)で、1人3,000円以内に収まる店
 function yasuuma(s){ const p = priceOf(s); return s.gRating >= 4.3 && (s.gReviews||0) >= 20 && p && (p.k==='p1' || p.k==='p2'); }
 function gmaps(s){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.name + ' ' + (s.address||'')); }
-function people(ns){ return ns.map(n=>`<span class="pp" style="background:${COLOR[n]}"><i></i>${esc(n)}</span>`).join(''); }
+function people(ns){ return ns.map(n=>`<span class="pp" style="background:${COLOR[n]};--c:${COLOR[n]}"><i>${esc(INI[n])}</i>${esc(n)}</span>`).join(''); }
 function toast(t){ const el=document.createElement('div'); el.className='toast'; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),1800); }
 
 /* ---------- render ---------- */
@@ -259,7 +260,7 @@ function drawPins(){
   visible().forEach(s => {
     if (s.lat==null) return;
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)?'<i class="pin-yu">安</i>':''}${pk?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}"></b>`).join('')}</div>`:''}</div>`;
+    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)?'<i class="pin-yu">安</i>':''}${pk?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
     const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
     m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
     m.on('click', () => select(s.id, false));
@@ -358,7 +359,7 @@ function setArea(a){
 /* ---------- who am I ---------- */
 function drawMe(){
   $('#me-av').style.background = me ? COLOR[me] : '';
-  $('#me-av').textContent = me ? me[0] : '?';
+  $('#me-av').textContent = me ? INI[me] : '?';
   $('#me-name').textContent = me || 'わたしは…';
 }
 function openWho(){
