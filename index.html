@@ -237,6 +237,8 @@ header.top{position:sticky;top:0;z-index:1500}
 .list.compact .who{grid-column:1/4;margin-top:4px}
 .list.compact .pp{font-size:0;padding:0 1px}
 .list.compact .pp i{margin:0}
+/* たばこ */
+.tag.sm-ok{background:#5c3d2e;color:#fff}.tag.sm-part{background:#e9dccf;color:#5c3d2e}.tag.sm-out{background:var(--ground);color:var(--muted);border:1px solid var(--line)}.tag.sm-no{background:var(--ground);color:var(--muted);border:1px dashed var(--line)}
 .tag.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .tag.ng{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .pin-wrap{position:relative;width:28px;height:28px}
@@ -308,6 +310,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <button class="chip yu" id="f-yu" data-f="yu" aria-pressed="false">安 安うま</button>
     <button class="chip" id="f-p2" data-f="p2" aria-pressed="false">1人3,000円以内</button>
     <button class="chip" id="f-p1" data-f="p1" aria-pressed="false">2,000円ではしご</button>
+    <button class="chip" id="f-smoke" data-f="smoke" aria-pressed="false">たばこOK</button>
     <button class="chip" id="f-sit" data-f="sit" aria-pressed="false">座れる</button>
     <button class="chip" id="f-stand" data-f="stand" aria-pressed="false">立ち飲み</button>
     <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かが行きたい</button>
@@ -445,6 +448,21 @@ function priceOf(s){
   return {k:'p4', t:'1人3,000円超', lo, hi};
 }
 function priceTag(s){ const p = priceOf(s); return p ? `<span class="tag ${p.k}">${p.t}</span>` : '<span class="tag warn">価格 要問い合わせ</span>'; }
+// 説明文(tips)の書き方から喫煙の扱いを判定する
+function smokeOf(s){
+  const t = String(s.tips || '') + ' ' + String(s.smoke || '');
+  if (/全席喫煙可|全面喫煙可|全席喫煙|喫煙可(?!\(要相談\))/.test(t) && !/店内禁煙|全席禁煙|完全禁煙|全面禁煙/.test(t)) {
+    if (/加熱式たばこのみ|電子たばこのみ|電子タバコのみ/.test(t)) return 'part';
+    if (/1階は|一部|分煙/.test(t)) return 'part';
+    return 'ok';
+  }
+  if (/分煙|一部喫煙|加熱式|電子たばこ|電子タバコ|喫煙室|1階は紙巻き|禁煙\(電子/.test(t)) return 'part';
+  if (/(店内禁煙|禁煙).*(喫煙所|外に灰皿|店外に灰皿)|喫煙所/.test(t)) return 'out';
+  if (/禁煙/.test(t)) return 'no';
+  return null;
+}
+const SMOKE = {ok:['sm-ok','喫煙可'], part:['sm-part','分煙・加熱式など'], out:['sm-out','店外に喫煙所'], no:['sm-no','禁煙']};
+function smokeTag(s, all){ const k = smokeOf(s); if (!k) return all ? '<span class="tag warn">喫煙 要問い合わせ</span>' : ''; if (!all && (k==='no' || k==='out')) return ''; return `<span class="tag ${SMOKE[k][0]}">${SMOKE[k][1]}</span>`; }
 const SEAT = {stand:'立ち飲み', seat:'着席', both:'立ち飲み＋席'};
 function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.seat]}</span>` : '<span class="tag warn">立ち/席 要問い合わせ</span>'; }
 function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
@@ -496,6 +514,7 @@ function visible(){
     (filter==='open' && s.d922==='ok') ||
     (filter==='p2' && priceOf(s) && ['p1','p2'].includes(priceOf(s).k)) ||
     (filter==='p1' && priceOf(s) && priceOf(s).k==='p1') ||
+    (filter==='smoke' && ['ok','part'].includes(smokeOf(s))) ||
     (filter==='sit' && (s.seat==='seat' || s.seat==='both')) ||
     (filter==='stand' && (s.seat==='stand' || s.seat==='both'))));
   const byPick = (a,b) => (pickOf(b.id)!==null) - (pickOf(a.id)!==null);
@@ -550,7 +569,7 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta">${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -566,7 +585,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${SLOT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
+  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${SLOT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${smokeTag(s,true)}${dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
   const score = [
     s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
                    : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
@@ -595,6 +614,7 @@ function detail(s){
     <dl class="kv">
       ${openedText(s)?`<dt>開業</dt><dd>${esc(openedText(s))}</dd>`:''}
       <dt>席</dt><dd>${s.seat ? SEAT[s.seat] + ({stand:'(座れない)', seat:'(全員座れる)', both:'(立ち飲みと座れる席の両方)'})[s.seat] : ASK}</dd>
+      <dt>たばこ</dt><dd>${smokeOf(s) ? SMOKE[smokeOf(s)][1] + ({ok:'(席で吸える)', part:'(分煙・加熱式のみ など。詳しくは下の「知っとく」)', out:'(店内は禁煙、外に喫煙所)', no:'(吸えない)'})[smokeOf(s)] : ASK}</dd>
       <dt>営業時間</dt><dd>${full(s.hours)}</dd>
       <dt>定休日</dt><dd>${full(s.holiday)}</dd>
       ${s.must?`<dt>名物</dt><dd>${esc(s.must)}</dd>`:''}
