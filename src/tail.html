@@ -175,7 +175,7 @@ const API = '';
 
 const MEMBERS = [
   {name:'いのぴー',  c:'#e03131'},
-  {name:'まなごっち', c:'#d6336c'},
+  {name:'まなごっち', c:'#e0a100'},
   {name:'たっちゃん', c:'#2f9e44'},
   {name:'まっちょ',  c:'#0c8599', ini:'M'},  // まなごっちと「ま」が重なるので M
   {name:'りん',      c:'#7048e8'}
@@ -335,9 +335,21 @@ function drawMembers(){
   const cnt = n => A.shops.filter(s => wantsOf(s.id).includes(n)).length;
   el.innerHTML = `<button id="mb-all" data-who="" aria-pressed="${!who}">全員</button>` + MEMBERS.map((m,i) => `<button id="mb-${i}" data-who="${esc(m.name)}" style="--c:${m.c}" aria-pressed="${who===m.name}"><i>${esc(INI[m.name])}</i>${esc(m.name)} <b>${cnt(m.name)}</b></button>`).join('');
 }
+// 0件のときに、何で絞り込まれているかと解除ボタンを出す
+function emptyHint(){
+  const why = [];
+  if (tab==='mine') why.push('「おれの行きたい」タブ');
+  if (tab==='team') why.push('「みんなの行きたい」タブ' + (who ? '(' + who + ')' : ''));
+  if (filter!=='all') why.push('チップ「' + (document.querySelector('.chip[data-f="'+filter+'"]')?.textContent || '') + '」');
+  if (query.trim()) why.push('検索「' + query.trim() + '」');
+  const off = ['lunch','after','night'].filter(k => show[k]===false).map(k => SLOT_SHORT[k]);
+  if (off.length) why.push('地図の凡例で ' + off.join('・') + ' をOFF');
+  if (!why.length) return '';
+  return '<div class="empty">いま ' + why.map(esc).join(' ＋ ') + ' で絞り込み中です。<br><button class="sbtn" id="reset-all">絞り込みをすべて解除</button></div>';
+}
 function drawList(){
   const list = visible();
-  $('#list').innerHTML = list.length ? list.map(s => {
+  $('#list').innerHTML = (list.length ? list.map(s => {
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
     return `<button class="item${s.id===selId?' sel':''}" id="it-${s.id}" data-id="${s.id}">
       <span class="num ${s.type}">${s.no}</span>
@@ -347,7 +359,7 @@ function drawList(){
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
-  }).join('') : (tab==='mine' ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「行きたい!」をつけていません。</div>' : '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>');
+  }).join('') : (tab==='mine' && filter==='all' && !query.trim() ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' && filter==='all' && !query.trim() ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「行きたい!」をつけていません。</div>' : '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>')) + (list.length ? '' : emptyHint());
   const A = AREAS[area];
   $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
   drawMembers();
@@ -489,6 +501,8 @@ document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click'
 $('#f-out').addEventListener('click', e => { showOut = !showOut; e.currentTarget.setAttribute('aria-pressed', showOut); drawPins(); drawList(); });
 document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => {
   filter = b.dataset.f;
+  // 時間帯のチップを押したら、凡例でOFFにしていてもその時間帯を表示に戻す
+  if (['lunch','after','night'].includes(filter) && show[filter] === false) { show[filter] = true; store.set('hn-show', show); drawLegend(); }
   document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c===b));
   drawPins(); drawList();
 }));
@@ -522,6 +536,14 @@ drawLegend();
   bar.addEventListener('dblclick', () => { wrap.style.flexBasis = ''; wrap.style.minHeight = ''; store.set('hn-maph', null); map.invalidateSize(); });
 })();
 $('#members').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; who = b.dataset.who || null; drawPins(); drawList(); $('#list').scrollTop = 0; });
+$('#list').addEventListener('click', e => {
+  if (e.target.id !== 'reset-all') return;
+  tab = 'all'; who = null; filter = 'all'; query = ''; $('#q').value = '';
+  show.lunch = show.after = show.night = true; store.set('hn-show', show); drawLegend();
+  document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.tab==='all'));
+  document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c.dataset.f==='all'));
+  drawPins(); drawList();
+});
 $('#sort').addEventListener('change', e => { sort = e.target.value; drawList(); drawPins(); });
 $('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
 $('#sh-close').addEventListener('click', () => { $('#sheet').classList.remove('open'); selId=null; drawPins(); drawList(); });
