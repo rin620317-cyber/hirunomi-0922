@@ -257,7 +257,8 @@
    "why": "中華食堂寄り",
    "seat": "seat",
    "gRating": 3.9,
-   "gReviews": 146
+   "gReviews": 146,
+   "opened": "前身「とらの穴」から移転・改名"
   },
   {
    "id": "f-makino",
@@ -365,7 +366,8 @@
    "why": "ランチセット中心で14:30まで",
    "seat": "seat",
    "gRating": 4.6,
-   "gReviews": 96
+   "gReviews": 96,
+   "opened": "25年以上続く老舗"
   },
   {
    "id": "f-velvet",
@@ -1035,7 +1037,8 @@
    "station": "JR福島 徒歩1分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27005163/",
    "gRating": 4.3,
-   "gReviews": 755
+   "gReviews": 755,
+   "opened": "昭和創業(創業50年以上)の老舗"
   },
   {
    "id": "f-tokin",
@@ -1059,7 +1062,8 @@
    "station": "JR福島 徒歩2分",
    "url": "https://tabelog.com/osaka/A2701/A270108/27020317/",
    "gRating": 4.3,
-   "gReviews": 29
+   "gReviews": 29,
+   "opened": "1989年創業(2003年に今の場所へ移転)"
   },
   {
    "id": "f-daisangen",

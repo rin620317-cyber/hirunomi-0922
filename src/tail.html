@@ -212,7 +212,11 @@ function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.
 function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
 function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
 function pickOf(id){ return Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
-function openedText(s){ if (s.year) return s.year + '年' + (s.month ? s.month + '月' : '') + '開業' + (2026 - s.year >= 1 ? '(' + (2026 - s.year) + '年目)' : '(今年オープン)'); return s.opened || null; }
+function openedText(s){
+  if (!s.year) return s.opened || null;
+  const t = s.year + '年' + (s.month ? s.month + '月' : '') + '開業' + (2026 - s.year >= 1 ? '(' + (2026 - s.year + 1) + '年目)' : '(今年オープン)');
+  return s.opened ? t + '。' + s.opened : t;
+}
 function rateNum(s){ return s.gRating ?? null; }
 // 安うま:Googleの評価4.3以上(口コミ20件以上)で、1人3,000円以内に収まる店
 function yasuuma(s){ const p = priceOf(s); return s.gRating >= 4.3 && (s.gReviews||0) >= 20 && p && (p.k==='p1' || p.k==='p2'); }
