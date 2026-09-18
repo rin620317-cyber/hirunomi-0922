@@ -363,7 +363,9 @@ function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,
 function pickOf(id){ return Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
 function openedText(s){
   if (!s.year) return s.opened || null;
-  const t = s.year + '年' + (s.month ? s.month + '月' : '') + '開業' + (2026 - s.year >= 1 ? '(' + (2026 - s.year + 1) + '年目)' : '(今年オープン)');
+  // 2026年9月時点で何年目か(月が不明なら年の半ばとみなす)
+  const elapsed = (2026 + 8/12) - (s.year + ((s.month || 6.5) - 1)/12);
+  const t = s.year + '年' + (s.month ? s.month + '月' : '') + '開業' + (elapsed < 1 ? '(1年未満)' : '(' + (Math.floor(elapsed) + 1) + '年目)');
   return s.opened ? t + '。' + s.opened : t;
 }
 function rateNum(s){ return s.gRating ?? null; }
