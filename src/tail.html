@@ -212,6 +212,7 @@ function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.
 function dayTag(s){ const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
 function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
 function pickOf(id){ return Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
+function openedText(s){ if (s.year) return s.year + '年' + (s.month ? s.month + '月' : '') + '開業' + (2026 - s.year >= 1 ? '(' + (2026 - s.year) + '年目)' : '(今年オープン)'); return s.opened || null; }
 function rateNum(s){ return s.gRating ?? null; }
 // 安うま:Googleの評価4.3以上(口コミ20件以上)で、1人3,000円以内に収まる店
 function yasuuma(s){ const p = priceOf(s); return s.gRating >= 4.3 && (s.gReviews||0) >= 20 && p && (p.k==='p1' || p.k==='p2'); }
@@ -295,7 +296,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}`;
+  $('#sh-sub').innerHTML = `<span class="tag ${s.type}">${s.type==='lunch'?'昼12時〜OK':'夜のみ'}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
   const score = [
     s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
                    : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
@@ -321,6 +322,7 @@ function detail(s){
     ${s.holidayNote?`<div class="callout"><b>9/22(祝)メモ:</b> ${esc(s.holidayNote)}</div>`:''}
     <p class="summary">${esc(s.summary)}</p>
     <dl class="kv">
+      ${openedText(s)?`<dt>開業</dt><dd>${esc(openedText(s))}</dd>`:''}
       <dt>席</dt><dd>${s.seat ? SEAT[s.seat] + ({stand:'(座れない)', seat:'(全員座れる)', both:'(立ち飲みと座れる席の両方)'})[s.seat] : ASK}</dd>
       <dt>営業時間</dt><dd>${full(s.hours)}</dd>
       <dt>定休日</dt><dd>${full(s.holiday)}</dd>

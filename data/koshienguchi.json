@@ -37,7 +37,8 @@
    "url": "https://tabelog.com/hyogo/A2803/A280301/28013337/",
    "seat": "seat",
    "gRating": 3.8,
-   "gReviews": 252
+   "gReviews": 252,
+   "opened": "創業約50年の老舗"
   },
   {
    "id": "k-ajipao",
@@ -604,11 +605,11 @@
    "name": "闇市 甲子園口店",
    "genre": "焼肉",
    "type": "night",
-   "d922": "ok",
+   "d922": "ng",
    "hours": "月〜土 17:00-24:00、日祝 16:30-23:30",
-   "hoursShort": "祝 16:30-23:30",
+   "hoursShort": "9/20閉店予定",
    "holiday": "要問い合わせ",
-   "holidayNote": "祝日は16時半開店",
+   "holidayNote": "公式サイトに「9/20閉店予定」とあるので、9/22は営業していない可能性が高い",
    "tabelog": "3.17",
    "reviews": 68,
    "summary": "質の良い肉が手頃で、ドリンクが安いと好評な焼肉店。混雑時は提供が遅い、少しずつ値上がりしたという声がある。",

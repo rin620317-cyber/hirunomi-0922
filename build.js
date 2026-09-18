@@ -13,6 +13,18 @@ const data = {
   fukushima: JSON.parse(fs.readFileSync(path.join(dir, 'data', 'fukushima.json'), 'utf8')),
   koshienguchi: JSON.parse(fs.readFileSync(path.join(dir, 'data', 'koshienguchi.json'), 'utf8')),
 };
+
+// 開業年(data/years.txt: 1行に「id|年|月」)を反映
+const yrs = {};
+const yearsFile = path.join(dir, 'data', 'years.txt');
+if (fs.existsSync(yearsFile)) {
+  for (const line of fs.readFileSync(yearsFile, 'utf8').split(/\r?\n/)) {
+    const [id, y, m] = line.trim().split('|');
+    if (id && y) yrs[id] = { y: +y, m: m ? +m : null };
+  }
+}
+for (const a of Object.values(data)) for (const s of a.shops) if (yrs[s.id]) { s.year = yrs[s.id].y; s.month = yrs[s.id].m; }
+
 const ids = new Set();
 for (const a of Object.values(data)) for (const s of a.shops) {
   if (ids.has(s.id)) throw new Error('duplicate id ' + s.id);
@@ -24,4 +36,4 @@ const api = (fs.existsSync(path.join(dir, 'api-url.txt')) ? fs.readFileSync(path
 tail = tail.replace("const API = '';", `const API = '${api}';`);
 
 fs.writeFileSync(path.join(dir, 'index.html'), html.slice(0, cut) + tail);
-console.log('built:', data.fukushima.shops.length, 'fukushima /', data.koshienguchi.shops.length, 'koshienguchi / API', api ? 'set' : 'none');
+console.log('built:', data.fukushima.shops.length, 'fukushima /', data.koshienguchi.shops.length, 'koshienguchi / API', api ? 'set' : 'none', '/ years', Object.keys(yrs).length);
