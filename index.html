@@ -313,12 +313,12 @@ header.top{position:sticky;top:0;z-index:1500}
     <button class="chip" id="f-smoke" data-f="smoke" aria-pressed="false">たばこOK</button>
     <button class="chip" id="f-sit" data-f="sit" aria-pressed="false">座れる</button>
     <button class="chip" id="f-stand" data-f="stand" aria-pressed="false">立ち飲み</button>
-    <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かが行きたい</button>
+    <button class="chip" id="f-want" data-f="want" aria-pressed="false">誰かの推し</button>
     <button class="chip" id="f-open" data-f="open" aria-pressed="false">9/22営業見込み</button>
     <button class="chip out" id="f-out" aria-pressed="false">食事中心の店も表示</button>
     <select class="sortsel" id="sort" aria-label="並び順">
       <option value="num">番号順</option>
-      <option value="votes">行きたい人が多い順</option>
+      <option value="votes">推しが多い順</option>
       <option value="price">安い順</option>
       <option value="rate">評価が高い順</option>
       <option value="genre">ジャンル順</option>
@@ -350,7 +350,7 @@ header.top{position:sticky;top:0;z-index:1500}
 <div class="modal" id="who-modal" hidden>
   <div class="box" role="dialog" aria-labelledby="who-title">
     <h3 id="who-title">あなたは誰?</h3>
-    <p>選ぶと、その色で「行きたい!」をつけられます。あとから右上で変えられます。</p>
+    <p>選ぶと、その色で「推し!」をつけられます。あとから右上で変えられます。</p>
     <div class="grid" id="who-grid"></div>
   </div>
 </div>
@@ -360,7 +360,7 @@ header.top{position:sticky;top:0;z-index:1500}
 const API = 'https://script.google.com/macros/s/AKfycbyfFWhgcM1nf0K7oqLNjTMsDjB1ekUe8dCvXfDH_tNzjd45-32df_rpl4KzphnUyfLF/exec';
 
 // このページの版(build.js が書き込む)。開いたときに公開中の版と比べ、新しければ自動で読み込み直す
-const BUILD_ID = '1789790794618';
+const BUILD_ID = '1789790882864';
 (function(){
   async function check(){
     if (!/^https?:/.test(location.protocol)) return;
@@ -596,7 +596,7 @@ function drawList(){
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
-  }).join('') : (tab==='mine' && !filters.size && !query.trim() ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' && !filters.size && !query.trim() ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「行きたい!」をつけていません。</div>' : '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>')) + (list.length ? '' : emptyHint());
+  }).join('') : (tab==='mine' && !filters.size && !query.trim() ? '<div class="empty">まだ「推し!」をつけたお店がありません。お店を開いて「推し!」を押すと、ここに並びます。</div>' : tab==='team' && !filters.size && !query.trim() ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「推し!」をつけていません。</div>' : '<div class="empty">まだ誰も「推し!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>')) + (list.length ? '' : emptyHint());
   const A = AREAS[area];
   $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
   drawMembers();
@@ -616,8 +616,8 @@ function detail(s){
   ].join('');
   const mine = me && w.includes(me);
   const vote = `<div class="vote">
-      ${me ? `<div class="row"><button class="vbtn" id="vote-btn" style="--c:${COLOR[me]}" aria-pressed="${mine}">${mine?'✓ 行きたい!(取り消す)':'行きたい!'}</button></div>`
-           : `<div class="row"><button class="sbtn" id="vote-who">まず自分を選んで「行きたい!」をつける</button></div>`}
+      ${me ? `<div class="row"><button class="vbtn" id="vote-btn" style="--c:${COLOR[me]}" aria-pressed="${mine}">${mine?'✓ 推し!(取り消す)':'推し!'}</button></div>`
+           : `<div class="row"><button class="sbtn" id="vote-who">まず自分を選んで「推し!」をつける</button></div>`}
       <div class="row">${MEMBERS.map(m=>`<span class="mem${w.includes(m.name)?' on':''}" style="--c:${m.c}"><i></i>${esc(m.name)}</span>`).join('')}</div>
     </div>`;
   const rinNote = pk!==null ? `<div class="rin"><b>★ りんのイチオシ</b>${pk?`<br>${esc(pk)}`:''}</div>` : '';
@@ -721,7 +721,7 @@ $('#sh-body').addEventListener('click', e => {
     push({action:'vote', shop:s.id, who:me, on:on?'1':'0'}, () => {
       const cur = new Set(shared.wants[s.id]||[]); on ? cur.add(me) : cur.delete(me); shared.wants[s.id] = [...cur];
     });
-    toast(on ? `${me}:行きたい!` : '取り消しました');
+    toast(on ? `${me}:推し!` : '取り消しました');
   }
   if (e.target.id==='pick-save') {
     const text = $('#pick-text').value.trim().slice(0,200);
