@@ -7,6 +7,7 @@ const SHEET_ID = '18V_4waXDc9MOneN6Ez8uS0EkdAW_AUuYwj7BbYLhnFw';  // 昼飲み�
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
+  if (p.action === 'gget' || p.action === 'gvote' || p.action === 'gjoin') return group_(p);
   const writing = p.action === 'vote' || p.action === 'pick';
   const lock = LockService.getScriptLock();
   if (writing) lock.waitLock(10000);
@@ -64,4 +65,40 @@ function find_(sh, fn) {
 }
 function out_(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---- 共有コードのグループ(武庫元町マップなど、見るだけ版のページ用) ----
+// 同じコードを入れた人どうしだけで「推し!」を共有する。コードを知らない人には見えない
+function group_(p) {
+  const code = String(p.g || '').toUpperCase();
+  if (!/^[A-Z0-9]{4,8}$/.test(code)) return out_({ error: 'bad code' });
+  const writing = p.action !== 'gget';
+  const lock = LockService.getScriptLock();
+  if (writing) lock.waitLock(10000);
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sh = sheet_(ss, 'gvotes', ['code', 'shop', 'who', 'updated']);
+    if (writing) {
+      const who = String(p.who || '').trim();
+      if (!who || who.length > 12 || /[\x00-\x1f<>]/.test(who)) return out_({ error: 'bad name' });
+      if (p.action === 'gjoin') {
+        if (find_(sh, r => r[0] === code && r[1] === '' && r[2] === who) < 0) sh.appendRow([code, '', who, new Date()]);
+      } else {
+        if (!/^[a-z0-9-]{1,40}$/.test(p.shop || '')) return out_({ error: 'bad shop id' });
+        const row = find_(sh, r => r[0] === code && r[1] === p.shop && r[2] === who);
+        if (p.on === '1' && row < 0) sh.appendRow([code, p.shop, who, new Date()]);
+        if (p.on !== '1' && row > 0) sh.deleteRow(row);
+      }
+    }
+    const wants = {}, members = [];
+    values_(sh).forEach(r => {
+      if (r[0] !== code) return;
+      const who = String(r[2]);
+      if (members.indexOf(who) < 0) members.push(who);
+      if (r[1]) (wants[r[1]] = wants[r[1]] || []).push(who);
+    });
+    return out_({ wants: wants, members: members, at: new Date().toISOString() });
+  } finally {
+    if (writing) lock.releaseLock();
+  }
 }

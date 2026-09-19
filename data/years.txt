@@ -114,3 +114,9 @@ f-nagashima|2024|2
 f-choichoi|2016|4
 f-nanone|2009|8
 f-kitazawa|2024|5
+m-tulip|2022|4
+m-kanchagi|2021|12
+m-tatchan|2014|1
+m-aina|2022|5
+m-tomato|2021|1
+m-inuma|2023|11

@@ -1,8 +1,8 @@
 {
-  "name": "昼飲みマップ 9/22",
-  "short_name": "昼飲み",
-  "description": "9/22(火・祝)5人で昼飲み。甲子園口・福島・武庫元町のお店マップ",
-  "start_url": "./",
+  "name": "ともにぃと行く武庫元町呑み",
+  "short_name": "武庫元町呑み",
+  "description": "武庫元町(サンモール武庫元町商店街〜尼宝線)の昼から飲める店マップ",
+  "start_url": "./mukomoto.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f5b400",
