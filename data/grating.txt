@@ -145,3 +145,4 @@ f-choichoi|4.5|33
 f-nanone|4.7|1958
 f-kitazawa|4.4|68
 f-hinoe|4.2|70
+k-onuki|4.2|208
