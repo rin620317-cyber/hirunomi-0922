@@ -2,7 +2,7 @@
   "name": "ともにぃと行く武庫元町呑み",
   "short_name": "武庫元町呑み",
   "description": "武庫元町(サンモール武庫元町商店街〜尼宝線)の昼から飲める店マップ",
-  "start_url": "./mukomoto.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f5b400",

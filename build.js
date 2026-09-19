@@ -68,6 +68,16 @@ function page(file, cfg, edit) {
     if (inHead) h = h.split(a).join(b);
     if (inTail) tail = tail.split(a).join(b);
   }
+  // 見るだけ版は外部に公開するので、5人の名前・りん・9/22 などの内輪の情報をソースから消す
+  if (cfg.mode === 'solo') {
+    tail = tail.replace(/const TEAM = \[[\s\S]*?\n\];/, 'const TEAM = [];')
+      .replace(/const OWNER = '[^']*';/, "const OWNER = '';")
+      .replace(/const DEFAULT_WANTS = \{.*\};/, 'const DEFAULT_WANTS = {};')
+      .replace(/^[ \t]*\/\/.*$/gm, '')
+      .replace(/\s\/\/ [^\n'`]*$/gm, '')
+      .split('りんだけに表示される').join('').split('りんの').join('').split('9/22').join('当日');
+  }
+  fs.mkdirSync(path.dirname(path.join(dir, file)), { recursive: true });
   fs.writeFileSync(path.join(dir, file), h + tail);
   console.log('built', file + ':', cfg.areas.map(k => k + ' ' + data[k].shops.length).join(' / '));
 }
@@ -76,11 +86,17 @@ function page(file, cfg, edit) {
 page('index.html', { mode: 'team', prefix: '', areas: ['koshienguchi', 'fukushima', 'mukomoto'], def: 'koshienguchi', owner: 'りん' });
 
 // 見るだけ版(武庫元町)。推しはこの端末だけ、共有コードを入れた人どうしだけで共有
-page('mukomoto.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'], def: 'mukomoto', owner: 'りん' }, [
+// 5人用とは別のリポジトリ(../delitomo → https://rin620317-cyber.github.io/delitomo/)で公開する
+page('../delitomo/index.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'], def: 'mukomoto', owner: 'りん' }, [
   ['<title>9/22 昼飲みマップ</title>', '<title>ともにぃと行く武庫元町呑み</title>'],
-  ['href="manifest.webmanifest"', 'href="manifest-mukomoto.webmanifest"'],
-  ['content="昼飲み"', 'content="武庫元町呑み"'],
+    ['content="昼飲み"', 'content="武庫元町呑み"'],
   ['<h1>昼飲みマップ</h1>', '<h1 style="line-height:1.25;white-space:nowrap"><span style="font-size:.72em">ともにぃと行く</span><br>武庫元町呑み</h1>'],
   ['<span class="date"><b>9/22(火・祝)</b> 5人で昼飲み</span>', '<span class="date"><b>日程未定</b> 昼から飲める店・はしご候補</span>'],
 ]);
 console.log('API', api ? 'set' : 'none', '/ years', Object.keys(yrs).length);
+
+// 見るだけ版のホーム画面用の設定とアイコンもコピー
+const out = path.join(dir, '..', 'delitomo');
+fs.copyFileSync(path.join(dir, 'manifest-mukomoto.webmanifest'), path.join(out, 'manifest.webmanifest'));
+fs.mkdirSync(path.join(out, 'icons'), { recursive: true });
+for (const f of fs.readdirSync(path.join(dir, 'icons'))) if (f.endsWith('.png')) fs.copyFileSync(path.join(dir, 'icons', f), path.join(out, 'icons', f));
