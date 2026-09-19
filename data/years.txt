@@ -103,3 +103,14 @@ f-hashigobar-pincho|2019|5
 f-shinjidai-fukushima|2024|5
 f-uotarian|2024|3
 k-nezumi|2024|4
+f-toriichizu|2026|7
+f-daisangen-fukumaru|2026|2
+f-sumiri|2024|12
+f-noboyan|2026|3
+f-warajiya|2025|10
+f-fukushima-akari|2026|6
+f-atetosakana|2024|9
+f-nagashima|2024|2
+f-choichoi|2016|4
+f-nanone|2009|8
+f-kitazawa|2024|5

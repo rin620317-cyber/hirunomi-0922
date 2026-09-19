@@ -133,3 +133,15 @@ f-uotarian|4.6|76
 f-blackstock|4.5|119
 f-naniwa-toku|4.1|16
 k-nezumi|4.5|187
+f-toriichizu|4.6|197
+f-daisangen-fukumaru|4.8|12
+f-sumiri|4.8|57
+f-noboyan|4.8|47
+f-warajiya|4.7|37
+f-fukushima-akari|4.9|7
+f-atetosakana|4.9|75
+f-nagashima|4.8|515
+f-choichoi|4.5|33
+f-nanone|4.7|1958
+f-kitazawa|4.4|68
+f-hinoe|4.2|70

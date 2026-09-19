@@ -131,3 +131,12 @@ f-uotarian|200
 f-blackstock|200
 f-naniwa-toku|404
 k-nezumi|404
+f-toriichizu|200
+f-daisangen-fukumaru|200
+f-sumiri|200
+f-noboyan|200
+f-atetosakana|200
+f-nagashima|200
+f-choichoi|200
+f-nanone|200
+f-hinoe|404
