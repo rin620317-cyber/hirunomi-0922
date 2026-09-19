@@ -202,6 +202,20 @@ header.top{position:sticky;top:0;z-index:1500}
 // ▼ Googleスプレッドシート(Apps Script)のWebアプリURL。空なら共有なし(この端末だけに保存)
 const API = '';
 
+// このページの版(build.js が書き込む)。開いたときに公開中の版と比べ、新しければ自動で読み込み直す
+const BUILD_ID = '__BUILD_ID__';
+(function(){
+  async function check(){
+    if (!/^https?:/.test(location.protocol)) return;
+    try {
+      const r = await fetch(location.pathname + '?v=' + Date.now(), {cache:'no-store'});
+      const m = (await r.text()).match(/const BUILD_ID = '(\d+)'/);
+      if (m && m[1] !== BUILD_ID) location.replace(location.pathname + '?v=' + m[1]);
+    } catch(e){}
+  }
+  check();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+})();
 const MEMBERS = [
   {name:'いのぴー',  c:'#e03131'},
   {name:'まなてぃ', c:'#e0a100'},

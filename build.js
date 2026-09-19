@@ -50,5 +50,6 @@ tail = tail.replace('/*DATA_START*/{}/*DATA_END*/', '/*DATA_START*/' + JSON.stri
 const api = (fs.existsSync(path.join(dir, 'api-url.txt')) ? fs.readFileSync(path.join(dir, 'api-url.txt'), 'utf8').trim() : '');
 tail = tail.replace("const API = '';", `const API = '${api}';`);
 
+tail = tail.replace("'__BUILD_ID__'", "'" + Date.now() + "'");
 fs.writeFileSync(path.join(dir, 'index.html'), html.slice(0, cut) + tail);
 console.log('built:', data.fukushima.shops.length, 'fukushima /', data.koshienguchi.shops.length, 'koshienguchi / API', api ? 'set' : 'none', '/ years', Object.keys(yrs).length);
