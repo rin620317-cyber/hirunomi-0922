@@ -80,7 +80,7 @@ page('mukomoto.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'], def: '
   ['<title>9/22 昼飲みマップ</title>', '<title>ともにぃと行く武庫元町呑み</title>'],
   ['href="manifest.webmanifest"', 'href="manifest-mukomoto.webmanifest"'],
   ['content="昼飲み"', 'content="武庫元町呑み"'],
-  ['<h1>昼飲みマップ</h1>', '<h1>ともにぃと行く武庫元町呑み</h1>'],
+  ['<h1>昼飲みマップ</h1>', '<h1 style="line-height:1.25;white-space:nowrap"><span style="font-size:.72em">ともにぃと行く</span><br>武庫元町呑み</h1>'],
   ['<span class="date"><b>9/22(火・祝)</b> 5人で昼飲み</span>', '<span class="date"><b>日程未定</b> 昼から飲める店・はしご候補</span>'],
 ]);
 console.log('API', api ? 'set' : 'none', '/ years', Object.keys(yrs).length);
