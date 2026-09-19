@@ -260,7 +260,7 @@ const store = {
 
 let area = store.get('hn-area') || 'fukushima'; if (!AREAS[area]) area = 'fukushima';
 let me = store.get('hn-me'); if (!COLOR[me]) me = null;
-let filter = 'all', sort = 'num', selId = null, showOut = false, tab = 'all', query = '', who = null;
+let filters = new Set(), sort = 'num', selId = null, showOut = false, tab = 'all', query = '', who = null;
 let shared = store.get('hn-shared') || {wants:{}, picks:{}};
 // りんの「行きたい」を最初から入れておく(各端末で1回だけ。あとで外した店は戻さない)
 const DEFAULT_WANTS = {'りん': ['f-jack','f-yuji','f-shibireya','f-santoku','f-atariya-shokudo','k-tamaki']};
@@ -358,22 +358,31 @@ function drawBase(){
   (A.stations||[]).forEach(st => L.marker([st.lat,st.lng], {icon:L.divIcon({className:'', html:`<span class="stn">${esc(st.name)}</span>`, iconSize:[0,0]}), interactive:false, zIndexOffset:-100}).addTo(base));
 }
 
+// 選んだチップの条件。昼と夜は「どちらか」、それ以外は「すべて満たす」
+const CHIP = {
+  yu:    s => yasuuma(s),
+  want:  s => wantsOf(s.id).length > 0,
+  pick:  s => pickOf(s.id) !== null,
+  open:  s => s.d922 === 'ok',
+  p2:    s => !!priceOf(s) && ['p1','p2'].includes(priceOf(s).k),
+  p1:    s => !!priceOf(s) && priceOf(s).k === 'p1',
+  smoke: s => ['ok','part'].includes(smokeOf(s)),
+  sit:   s => s.seat === 'seat' || s.seat === 'both',
+  stand: s => s.seat === 'stand' || s.seat === 'both'
+};
+function chipOk(s){
+  const times = ['lunch','night'].filter(t => filters.has(t));
+  if (times.length && !times.includes(s.type)) return false;
+  for (const k of filters) if (CHIP[k] && !CHIP[k](s)) return false;
+  return true;
+}
 function visible(){
   const q = query.trim().toLowerCase();
   let list = AREAS[area].shops.filter(s => show[s.type] !== false && (showOut || s.fit!==false || tab!=='all') &&
     (tab!=='mine' || (me && wantsOf(s.id).includes(me))) &&
     (tab!=='team' || (who ? wantsOf(s.id).includes(who) : (wantsOf(s.id).length || pickOf(s.id)!==null))) &&
     (!q || (t => t.includes(q) || yomiHits(q).some(w => t.includes(w.toLowerCase())))([s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase())) && (
-    (filter==='yu' && yasuuma(s)) ||
-    filter==='all' || s.type===filter ||
-    (filter==='want' && wantsOf(s.id).length) ||
-    (filter==='pick' && pickOf(s.id)!==null) ||
-    (filter==='open' && s.d922==='ok') ||
-    (filter==='p2' && priceOf(s) && ['p1','p2'].includes(priceOf(s).k)) ||
-    (filter==='p1' && priceOf(s) && priceOf(s).k==='p1') ||
-    (filter==='smoke' && ['ok','part'].includes(smokeOf(s))) ||
-    (filter==='sit' && (s.seat==='seat' || s.seat==='both')) ||
-    (filter==='stand' && (s.seat==='stand' || s.seat==='both'))));
+    chipOk(s)));
   const byPick = (a,b) => (pickOf(b.id)!==null) - (pickOf(a.id)!==null);
   if (sort==='votes') list = [...list].sort((a,b)=> wantsOf(b.id).length - wantsOf(a.id).length || byPick(a,b) || a.no-b.no);
   if (sort==='price') list = [...list].sort((a,b)=> ((priceOf(a)||{hi:1e9}).hi - (priceOf(b)||{hi:1e9}).hi) || ((priceOf(a)||{lo:1e9}).lo - (priceOf(b)||{lo:1e9}).lo));
@@ -411,7 +420,7 @@ function emptyHint(){
   const why = [];
   if (tab==='mine') why.push('「おれ推し」タブ');
   if (tab==='team') why.push('「みんな推し」タブ' + (who ? '(' + who + ')' : ''));
-  if (filter!=='all') why.push('チップ「' + (document.querySelector('.chip[data-f="'+filter+'"]')?.textContent || '') + '」');
+  if (filters.size) why.push('チップ「' + [...filters].map(k => document.querySelector('.chip[data-f="'+k+'"]')?.textContent || k).join('・') + '」');
   if (query.trim()) why.push('検索「' + query.trim() + '」');
   const off = ['lunch','night'].filter(k => show[k]===false).map(k => SLOT_SHORT[k]);
   if (off.length) why.push('地図の凡例で ' + off.join('・') + ' をOFF');
@@ -430,7 +439,7 @@ function drawList(){
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
-  }).join('') : (tab==='mine' && filter==='all' && !query.trim() ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' && filter==='all' && !query.trim() ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「行きたい!」をつけていません。</div>' : '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>')) + (list.length ? '' : emptyHint());
+  }).join('') : (tab==='mine' && !filters.size && !query.trim() ? '<div class="empty">まだ「行きたい!」をつけたお店がありません。お店を開いて「行きたい!」を押すと、ここに並びます。</div>' : tab==='team' && !filters.size && !query.trim() ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「行きたい!」をつけていません。</div>' : '<div class="empty">まだ誰も「行きたい!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>')) + (list.length ? '' : emptyHint());
   const A = AREAS[area];
   $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
   drawMembers();
@@ -572,12 +581,19 @@ $('#sh-body').addEventListener('click', e => {
 /* ---------- events ---------- */
 document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => setArea(b.dataset.area)));
 $('#f-out').addEventListener('click', e => { showOut = !showOut; e.currentTarget.setAttribute('aria-pressed', showOut); drawPins(); drawList(); });
+function drawChips(){ document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c.dataset.f === 'all' ? !filters.size : filters.has(c.dataset.f))); }
 document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => {
-  filter = b.dataset.f;
-  // 時間帯のチップを押したら、凡例でOFFにしていてもその時間帯を表示に戻す
-  if (['lunch','night'].includes(filter) && show[filter] === false) { show[filter] = true; store.set('hn-show', show); drawLegend(); }
-  document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c===b));
-  drawPins(); drawList();
+  const k = b.dataset.f;
+  if (k === 'all') filters.clear();
+  else if (filters.has(k)) filters.delete(k);
+  else {
+    filters.add(k);
+    // 時間帯のチップを押したら、凡例でOFFにしていてもその時間帯を表示に戻す
+    if (['lunch','night'].includes(k) && show[k] === false) { show[k] = true; store.set('hn-show', show); drawLegend(); }
+    // 「3,000円以内」と「2,000円ではしご」は片方だけ
+    if (k === 'p1') filters.delete('p2'); if (k === 'p2') filters.delete('p1');
+  }
+  drawChips(); drawPins(); drawList();
 }));
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
   if (b.dataset.tab==='mine' && !me) { openWho(); return; }
@@ -648,10 +664,10 @@ drawLegend();
 $('#members').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; who = b.dataset.who || null; drawPins(); drawList(); $('#list').scrollTop = 0; });
 $('#list').addEventListener('click', e => {
   if (e.target.id !== 'reset-all') return;
-  tab = 'all'; who = null; filter = 'all'; query = ''; $('#q').value = '';
+  tab = 'all'; who = null; filters.clear(); query = ''; $('#q').value = '';
   show.lunch = show.night = true; store.set('hn-show', show); drawLegend();
   document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.tab==='all'));
-  document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c.dataset.f==='all'));
+  drawChips();
   drawPins(); drawList();
 });
 // 一覧を「店名だけ」と「詳しく」で切り替える(この端末に記憶)
