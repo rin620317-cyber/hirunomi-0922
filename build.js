@@ -87,7 +87,7 @@ page('index.html', { mode: 'team', prefix: '', areas: ['koshienguchi', 'fukushim
 
 // 見るだけ版(武庫元町)。推しはこの端末だけ、共有コードを入れた人どうしだけで共有
 // 5人用とは別のリポジトリ(../delitomo → https://rin620317-cyber.github.io/delitomo/)で公開する
-page('../delitomo/index.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'], def: 'mukomoto', owner: 'りん' }, [
+page('../delitomo/index.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'], def: 'mukomoto', owner: '' }, [
   ['<title>9/22 昼飲みマップ</title>', '<title>ともにぃと行く武庫元町呑み</title>'],
     ['content="昼飲み"', 'content="武庫元町呑み"'],
   ['<h1>昼飲みマップ</h1>', '<h1 style="line-height:1.25;white-space:nowrap"><span style="font-size:.72em">ともにぃと行く</span><br>武庫元町呑み</h1>'],
