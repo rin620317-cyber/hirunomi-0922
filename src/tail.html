@@ -432,6 +432,8 @@ function visible(){
     (!q || (t => t.includes(q) || yomiHits(q).some(w => t.includes(w.toLowerCase())))([s.name,s.genre,s.must,s.catch,s.summary].join(' ').toLowerCase())) && (
     chipOk(s)));
   const byPick = (a,b) => (pickOf(b.id)!==null) - (pickOf(a.id)!==null);
+  // みんな推しタブ(番号順のとき):昼の店→夜の店の順に分け、その中は推しの人数が多い順
+  if (tab==='team' && sort==='num') list = [...list].sort((a,b)=> (a.type!==b.type ? (a.type==='lunch' ? -1 : 1) : 0) || wantsOf(b.id).length - wantsOf(a.id).length || a.no-b.no);
   if (sort==='votes') list = [...list].sort((a,b)=> wantsOf(b.id).length - wantsOf(a.id).length || byPick(a,b) || a.no-b.no);
   if (sort==='price') list = [...list].sort((a,b)=> ((priceOf(a)||{hi:1e9}).hi - (priceOf(b)||{hi:1e9}).hi) || ((priceOf(a)||{lo:1e9}).lo - (priceOf(b)||{lo:1e9}).lo));
   if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
