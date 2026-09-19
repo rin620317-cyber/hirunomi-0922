@@ -130,3 +130,4 @@ f-okkyagari|200
 f-uotarian|200
 f-blackstock|200
 f-naniwa-toku|404
+k-nezumi|404

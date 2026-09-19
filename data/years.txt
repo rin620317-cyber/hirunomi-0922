@@ -102,3 +102,4 @@ k-kokoru|2024|10
 f-hashigobar-pincho|2019|5
 f-shinjidai-fukushima|2024|5
 f-uotarian|2024|3
+k-nezumi|2024|4

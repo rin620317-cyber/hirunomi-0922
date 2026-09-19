@@ -132,3 +132,4 @@ f-okkyagari|4.1|470
 f-uotarian|4.6|76
 f-blackstock|4.5|119
 f-naniwa-toku|4.1|16
+k-nezumi|4.5|187
