@@ -83,8 +83,8 @@ function page(file, cfg, edit) {
   console.log('built', file + ':', cfg.areas.map(k => k + ' ' + data[k].shops.length).join(' / '));
 }
 
-// 5人で共有する版(甲子園口が最初。プルダウンで福島・武庫元町)
-page('index.html', { mode: 'team', prefix: '', areas: ['koshienguchi', 'fukushima', 'mukomoto'], def: 'koshienguchi', owner: 'りん' });
+// 5人で共有する版(甲子園口が最初。プルダウンで福島・武庫元町・自宅周辺)
+page('index.html', { mode: 'team', prefix: '', areas: ['koshienguchi', 'fukushima', 'mukomoto', 'noma'], def: 'koshienguchi', owner: 'りん' });
 
 // 見るだけ版(武庫元町)。推しはこの端末だけ、共有コードを入れた人どうしだけで共有
 // 5人用とは別のリポジトリ(../delitomo → https://rin620317-cyber.github.io/delitomo/)で公開する
