@@ -94,6 +94,14 @@ page('../delitomo/index.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'
   ['<h1>昼飲みマップ</h1>', '<h1 style="line-height:1.25;white-space:nowrap"><span style="font-size:.72em">ともにぃと行く</span><br>武庫元町呑み</h1>'],
   ['<span class="date"><b>9/22(火・祝)</b> 5人で昼飲み</span>', '<span class="date"><b>日程未定</b> 昼から飲める店・はしご候補</span>'],
 ]);
+// 近所のうまい店(伊丹・野間の自宅から徒歩・自転車の範囲)。推しの機能なしの見るだけ版
+// 置き場所の名前が決まったら、出力先とタイトルを直して公開する
+page('../noma-map/index.html', { mode: 'view', prefix: 'nm-', areas: ['noma'], def: 'noma', owner: '' }, [
+  ['<title>9/22 昼飲みマップ</title>', '<title>近所のうまい店マップ</title>'],
+  ['content="昼飲み"', 'content="近所のうまい店"'],
+  ['<h1>昼飲みマップ</h1>', '<h1>近所のうまい店マップ</h1>'],
+  ['<span class="date"><b>9/22(火・祝)</b> 5人で昼飲み</span>', '<span class="date">自宅から歩き・自転車で行ける店</span>'],
+]);
 console.log('API', api ? 'set' : 'none', '/ years', Object.keys(yrs).length);
 
 // 見るだけ版のホーム画面用の設定とアイコンもコピー

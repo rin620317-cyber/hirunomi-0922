@@ -274,6 +274,9 @@ header.top{position:sticky;top:0;z-index:1500}
 .areasel{font:inherit;font-weight:700;font-size:14px;border:1px solid var(--line);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235f6a7d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--ink);border-radius:999px;padding:6px 32px 6px 14px;-webkit-appearance:none;appearance:none;cursor:pointer}
 .tag.rec{background:#ffe7a0;color:#5c4200;border-color:#f0c64a}
 .tag.dist{background:#e3edff;color:#1b4b94}
+.tag.note{background:#ffd9e5;color:#8a1f45}
+.callout.note{background:#fff0f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.note{background:#5a1430;color:#ffd9e5}:root:not([data-theme="light"]) .callout.note{background:#33121f}}
 .stn.home{background:#2f6fdd}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.dist{background:#17315c;color:#cfe0ff}}
 .callout.rec{background:#fff6d6}
@@ -376,7 +379,7 @@ header.top{position:sticky;top:0;z-index:1500}
 const API = 'https://script.google.com/macros/s/AKfycbyfFWhgcM1nf0K7oqLNjTMsDjB1ekUe8dCvXfDH_tNzjd45-32df_rpl4KzphnUyfLF/exec';
 
 // このページの版(build.js が書き込む)。開いたときに公開中の版と比べ、新しければ自動で読み込み直す
-const BUILD_ID = '1791864301471';
+const BUILD_ID = '1791865743780';
 (function(){
   async function check(){
     if (!/^https?:/.test(location.protocol)) return;
@@ -666,7 +669,7 @@ function drawList(){
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
       <span class="meta">${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
-      <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
+      <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${s.note?`<span class="tag note">ひとこと</span>`:''}${esc(s.note || s.catch || s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
   }).join('') : (tab==='mine' && !filters.size && !query.trim() ? '<div class="empty">まだ「推し!」をつけたお店がありません。お店を開いて「推し!」を押すと、ここに並びます。</div>' : tab==='team' && !filters.size && !query.trim() ? (who ? '<div class="empty">' + esc(who) + 'さんはまだ「推し!」をつけていません。</div>' : '<div class="empty">まだ誰も「推し!」をつけていません。</div>') : '<div class="empty">該当するお店がありません</div>')) + (list.length ? '' : emptyHint());
@@ -676,6 +679,7 @@ function drawList(){
   if (SOLO && !VIEW) $('#tab-team').hidden = !group;  // みんな推しは共有コードに参加しているときだけ
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
+  if (VIEW) { $('#foot').textContent = `${A.label}:${A.shops.length}店(昼 ${A.shops.filter(s=>s.type==='lunch').length}・夜 ${A.shops.filter(s=>s.type==='night').length})。評価はGoogleマップ、${A.asof}時点の調べ。距離は直線距離の目安。行く前に営業時間を確認してください。`; return; }
   $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
 }
 
@@ -710,6 +714,7 @@ function detail(s){
     ${score?`<div class="score">${score}</div>`:''}
     <div class="menu-links"><a class="menu-main" href="${gmaps(s)}" target="_blank" rel="noopener">Googleマップで見る(メニュー・写真・クチコミ)</a>${s.tlMenu?`<a href="${esc(s.tlMenu)}" target="_blank" rel="noopener">${esc(s.tlMenuLabel)}</a>`:''}</div>
     ${s.fit===false?`<div class="callout" style="background:var(--ground)"><b style="color:var(--muted)">30〜40代の飲み向けリストから除外:</b> ${esc(s.why)}</div>`:''}
+    ${s.note?`<div class="callout note"><b>ひとこと:</b> ${esc(s.note)}</div>`:''}
     ${SOLO && s.rec?`<div class="callout rec"><b>★ ${esc(REC)}:</b> ${esc(PAGE.owner)}のおすすめのお店です</div>`:''}
     ${s.holidayNote?`<div class="callout"><b>${AREAS[area].noDate?'営業日メモ':'9/22(祝)メモ'}:</b> ${esc(s.holidayNote)}</div>`:''}
     <p class="summary">${esc(s.summary)}</p>
@@ -752,7 +757,9 @@ function setArea(a){
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
   drawChips();
   drawBase(); drawPins(); drawList();
-  map.fitBounds(A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]), {padding:[30,30], maxZoom:17});
+  const pts = A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]);
+  if (A.home) pts.push([A.home.lat, A.home.lng]);
+  map.fitBounds(pts, {padding:[30,30], maxZoom: A.home ? 16 : 17});
   $('#list').scrollTop = 0;
 }
 

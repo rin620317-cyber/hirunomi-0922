@@ -522,6 +522,7 @@ function drawList(){
   if (SOLO && !VIEW) $('#tab-team').hidden = !group;  // みんな推しは共有コードに参加しているときだけ
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
+  if (VIEW) { $('#foot').textContent = `${A.label}:${A.shops.length}店(昼 ${A.shops.filter(s=>s.type==='lunch').length}・夜 ${A.shops.filter(s=>s.type==='night').length})。評価はGoogleマップ、${A.asof}時点の調べ。距離は直線距離の目安。行く前に営業時間を確認してください。`; return; }
   $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
 }
 
@@ -599,7 +600,9 @@ function setArea(a){
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
   drawChips();
   drawBase(); drawPins(); drawList();
-  map.fitBounds(A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]), {padding:[30,30], maxZoom:17});
+  const pts = A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]);
+  if (A.home) pts.push([A.home.lat, A.home.lng]);
+  map.fitBounds(pts, {padding:[30,30], maxZoom: A.home ? 16 : 17});
   $('#list').scrollTop = 0;
 }
 
