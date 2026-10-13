@@ -299,7 +299,8 @@ const SLOT_SHORT = {lunch:'昼', night:'夜'};
 for (const k in AREAS) AREAS[k].shops.forEach(s => { s.type = slotOf(s); });
 for (const k in AREAS) if (AREAS[k].shops.some(s => s.kind)) AREAS[k].shops.forEach(s => { if (!s.kind) s.kind = 'eatin'; });
 // 1人5,000円を上回る店(予算の目安の真ん中が5,000円超)は載せない
-for (const k in AREAS) AREAS[k].shops = AREAS[k].shops.filter(s => { const p = priceOf(s); return !p || (p.lo+p.hi)/2 <= 5000; });
+// (自宅周辺のように自分で選んだ店だけを載せるエリアは除く)
+for (const k in AREAS) if (!AREAS[k].home) AREAS[k].shops = AREAS[k].shops.filter(s => { const p = priceOf(s); return !p || (p.lo+p.hi)/2 <= 5000; });
 for (const k in AREAS) { AREAS[k].shops.sort((a,b)=>(a.fit===false)-(b.fit===false)); AREAS[k].shops.forEach((s,i)=>{ s.no = i+1; }); }
 
 const $ = s => document.querySelector(s);

@@ -145,3 +145,4 @@ k-3chome|404
 k-tasuki|404
 n-angle|200
 n-komameya|200
+n-oubaitouri|200
