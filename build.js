@@ -70,7 +70,7 @@ function page(file, cfg, edit) {
     if (inTail) tail = tail.split(a).join(b);
   }
   // 見るだけ版は外部に公開するので、5人の名前・りん・9/22 などの内輪の情報をソースから消す
-  if (cfg.mode === 'solo') {
+  if (cfg.mode !== 'team') {
     tail = tail.replace(/const TEAM = \[[\s\S]*?\n\];/, 'const TEAM = [];')
       .replace(/const OWNER = '[^']*';/, "const OWNER = '';")
       .replace(/const DEFAULT_WANTS = \{.*\};/, 'const DEFAULT_WANTS = {};')
@@ -96,7 +96,7 @@ page('../delitomo/index.html', { mode: 'solo', prefix: 'mk-', areas: ['mukomoto'
 ]);
 // 近所のうまい店(伊丹・野間の自宅から徒歩・自転車の範囲)。推しの機能なしの見るだけ版
 // 置き場所の名前が決まったら、出力先とタイトルを直して公開する
-page('../noma-map/index.html', { mode: 'view', prefix: 'nm-', areas: ['noma'], def: 'noma', owner: '' }, [
+page('../nomameshi/index.html', { mode: 'view', prefix: 'nm-', areas: ['noma'], def: 'noma', owner: '' }, [
   ['<title>9/22 昼飲みマップ</title>', '<title>近所のうまい店マップ</title>'],
   ['content="昼飲み"', 'content="近所のうまい店"'],
   ['<h1>昼飲みマップ</h1>', '<h1>近所のうまい店マップ</h1>'],
@@ -105,7 +105,9 @@ page('../noma-map/index.html', { mode: 'view', prefix: 'nm-', areas: ['noma'], d
 console.log('API', api ? 'set' : 'none', '/ years', Object.keys(yrs).length);
 
 // 見るだけ版のホーム画面用の設定とアイコンもコピー
-const out = path.join(dir, '..', 'delitomo');
-fs.copyFileSync(path.join(dir, 'manifest-mukomoto.webmanifest'), path.join(out, 'manifest.webmanifest'));
-fs.mkdirSync(path.join(out, 'icons'), { recursive: true });
-for (const f of fs.readdirSync(path.join(dir, 'icons'))) if (f.endsWith('.png')) fs.copyFileSync(path.join(dir, 'icons', f), path.join(out, 'icons', f));
+for (const [folder, mf] of [['delitomo', 'manifest-mukomoto.webmanifest'], ['nomameshi', 'manifest-noma.webmanifest']]) {
+  const out = path.join(dir, '..', folder);
+  fs.copyFileSync(path.join(dir, mf), path.join(out, 'manifest.webmanifest'));
+  fs.mkdirSync(path.join(out, 'icons'), { recursive: true });
+  for (const f of fs.readdirSync(path.join(dir, 'icons'))) if (f.endsWith('.png')) fs.copyFileSync(path.join(dir, 'icons', f), path.join(out, 'icons', f));
+}
