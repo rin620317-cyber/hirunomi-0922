@@ -273,6 +273,9 @@ header.top{position:sticky;top:0;z-index:1500}
 .modal .grid button[aria-pressed="true"] i{background:#fff}
 .areasel{font:inherit;font-weight:700;font-size:14px;border:1px solid var(--line);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235f6a7d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--ink);border-radius:999px;padding:6px 32px 6px 14px;-webkit-appearance:none;appearance:none;cursor:pointer}
 .tag.rec{background:#ffe7a0;color:#5c4200;border-color:#f0c64a}
+.tag.dist{background:#e3edff;color:#1b4b94}
+.stn.home{background:#2f6fdd}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.dist{background:#17315c;color:#cfe0ff}}
 .callout.rec{background:#fff6d6}
 .share label{font-size:12px;font-weight:700;display:flex;flex-direction:column;gap:4px}
 .share input{font:inherit;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--ground);color:var(--ink)}
@@ -373,7 +376,7 @@ header.top{position:sticky;top:0;z-index:1500}
 const API = 'https://script.google.com/macros/s/AKfycbyfFWhgcM1nf0K7oqLNjTMsDjB1ekUe8dCvXfDH_tNzjd45-32df_rpl4KzphnUyfLF/exec';
 
 // このページの版(build.js が書き込む)。開いたときに公開中の版と比べ、新しければ自動で読み込み直す
-const BUILD_ID = '1789806730122';
+const BUILD_ID = '1791864301471';
 (function(){
   async function check(){
     if (!/^https?:/.test(location.protocol)) return;
@@ -388,7 +391,8 @@ const BUILD_ID = '1789806730122';
 })();
 // このページの設定(build.js が書き込む)。team=5人で共有する版、solo=見るだけ版(推しはこの端末だけ。共有コードを入れた人どうしだけで共有)
 const PAGE = /*PAGE_START*/{"mode":"team","prefix":"","areas":["koshienguchi","fukushima","mukomoto"],"def":"koshienguchi","owner":"りん"}/*PAGE_END*/;
-const SOLO = PAGE.mode === 'solo';
+const VIEW = PAGE.mode === 'view';          // 見るだけ版(推しの機能なし)
+const SOLO = PAGE.mode === 'solo' || VIEW;  // 5人の共有を使わない版
 const PALETTE = ['#7048e8','#e03131','#2f9e44','#0c8599','#e0a100','#d6336c','#1971c2','#f76707','#5c940d','#862e9c','#495057','#0b7285'];
 const TEAM = [
   {name:'いのぴー',  c:'#e03131'},
@@ -520,6 +524,20 @@ function smokeOf(s){
 }
 const SMOKE = {ok:['sm-ok','喫煙可'], part:['sm-part','分煙・加熱式など'], out:['sm-out','店外に喫煙所'], no:['sm-no','禁煙']};
 function smokeTag(s, all){ const k = smokeOf(s); if (!k) return all ? '<span class="tag warn">喫煙 要問い合わせ</span>' : ''; if (!all && (k==='no' || k==='out')) return ''; return `<span class="tag ${SMOKE[k][0]}">${SMOKE[k][1]}</span>`; }
+// 自宅(エリアの home)からの距離と、歩き・自転車でかかる時間の目安
+function distOf(s){
+  const h = AREAS[area].home; if (!h || s.lat == null) return null;
+  const toR = d => d * Math.PI / 180;
+  const dLat = toR(s.lat - h.lat), dLng = toR(s.lng - h.lng) * Math.cos(toR((s.lat + h.lat) / 2));
+  return Math.round(6371000 * Math.sqrt(dLat*dLat + dLng*dLng));
+}
+const walkMin = m => Math.max(1, Math.round(m / 80));    // 歩き 分速80m
+const bikeMin = m => Math.max(1, Math.round(m / 230));   // 自転車 分速230m(時速14kmくらい)
+function distTag(s){ const m = distOf(s); return m == null ? '' : `<span class="tag dist">徒歩${walkMin(m)}分</span>`; }
+function distText(s){
+  const m = distOf(s); if (m == null) return null;
+  return (m < 1000 ? m + 'm' : (m/1000).toFixed(1) + 'km') + '(直線距離) ・ 徒歩' + walkMin(m) + '分 ・ 自転車' + bikeMin(m) + '分';
+}
 const SEAT = {stand:'立ち飲み', seat:'着席', both:'立ち飲み＋席'};
 function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.seat]}</span>` : '<span class="tag warn">立ち/席 要問い合わせ</span>'; }
 // 日程が決まっていないエリア(noDate)では「9/22営業」の表示を出さない
@@ -552,7 +570,12 @@ function toast(t){ const el=document.createElement('div'); el.className='toast';
 function drawBase(){
   base.clearLayers();
   const A = AREAS[area];
-  if (show.ring && !A.noRing) {
+  // 自宅があるエリアでは、自宅の位置と「徒歩10分・自転車10分」の円を出す
+  if (A.home) {
+    L.marker([A.home.lat, A.home.lng], {icon:L.divIcon({className:'', html:'<span class="stn home">🏠 自宅</span>', iconSize:[0,0]}), interactive:false, zIndexOffset:-50}).addTo(base);
+    if (show.ring) [[800,'徒歩10分'],[2300,'自転車10分']].forEach(([r]) => L.circle([A.home.lat, A.home.lng], {radius:r, className:'ring', weight:1.5, dashArray:'4 5', fill:true, interactive:false}).addTo(base));
+  }
+  if (show.ring && !A.noRing && !A.home) {
   // 円は駅(中心)から歩いて5分(約400m)・10分(約800m)の範囲
   const lat0 = A.center[0], k = 1/111320;
   [[400,'駅から徒歩5分'],[800,'駅から徒歩10分']].forEach(([r,t]) => {
@@ -642,7 +665,7 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta">${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${esc(s.catch||s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -650,7 +673,7 @@ function drawList(){
   const A = AREAS[area];
   $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
   drawMembers();
-  if (SOLO) $('#tab-team').hidden = !group;  // みんな推しは共有コードに参加しているときだけ
+  if (SOLO && !VIEW) $('#tab-team').hidden = !group;  // みんな推しは共有コードに参加しているときだけ
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
   $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
@@ -666,7 +689,7 @@ function detail(s){
     s.budget ? `<div><div class="big" style="font-size:18px">${esc(s.budget)}</div><div class="src">予算の目安</div></div>` : ''
   ].join('');
   const mine = me && w.includes(me);
-  const vote = SOLO ? `<div class="vote">
+  const vote = VIEW ? '' : SOLO ? `<div class="vote">
       <div class="row"><button class="vbtn" id="vote-btn" style="--c:${COLOR[me]}" aria-pressed="${mine}">${mine?'✓ 推し!(取り消す)':'推し!'}</button></div>
       ${group ? `<div class="row">${MEMBERS.map(m=>`<span class="mem${w.includes(m.name)?' on':''}" style="--c:${m.c}"><i></i>${esc(m.name)}</span>`).join('')}</div>`
               : `<div class="row" style="font-size:12px;color:var(--muted)">推しはこのスマホだけに保存されます。<button class="sbtn" id="vote-share" style="font-size:12px;padding:3px 10px">仲間と共有する</button></div>`}
@@ -691,6 +714,7 @@ function detail(s){
     ${s.holidayNote?`<div class="callout"><b>${AREAS[area].noDate?'営業日メモ':'9/22(祝)メモ'}:</b> ${esc(s.holidayNote)}</div>`:''}
     <p class="summary">${esc(s.summary)}</p>
     <dl class="kv">
+      ${distText(s)?`<dt>自宅から</dt><dd>${esc(distText(s))}</dd>`:''}
       ${openedText(s)?`<dt>開業</dt><dd>${esc(openedText(s))}</dd>`:''}
       <dt>席</dt><dd>${s.seat ? SEAT[s.seat] + ({stand:'(座れない)', seat:'(全員座れる)', both:'(立ち飲みと座れる席の両方)'})[s.seat] : ASK}</dd>
       <dt>たばこ</dt><dd>${smokeOf(s) ? SMOKE[smokeOf(s)][1] + ({ok:'(席で吸える)', part:'(分煙・加熱式のみ など。詳しくは下の「知っとく」)', out:'(店内は禁煙、外に喫煙所)', no:'(吸えない)'})[smokeOf(s)] : ASK}</dd>
@@ -885,6 +909,8 @@ $('#area-sel').hidden = PAGE.areas.length < 2;
 $('#area-sel').addEventListener('change', e => setArea(e.target.value));
 $('#f-rec').textContent = '★ ' + REC;
 if (SOLO) $('#f-want').textContent = '推しの店';
+// 見るだけ版:推しに関わるボタン・タブ・共有の表示をまとめて消す
+if (VIEW) { for (const id of ['#me-btn','#tab-mine','#tab-team','#f-want','#sync']) $(id).hidden = true; $('#tab-all').textContent = '一覧'; }
 $('#f-out').addEventListener('click', e => { showOut = !showOut; e.currentTarget.setAttribute('aria-pressed', showOut); drawPins(); drawList(); });
 function drawChips(){ document.querySelectorAll('.chip[data-f]').forEach(c => c.setAttribute('aria-pressed', c.dataset.f === 'all' ? !filters.size : filters.has(c.dataset.f))); }
 document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => {
