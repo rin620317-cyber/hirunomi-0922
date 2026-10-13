@@ -15,6 +15,7 @@ const data = {
   koshienguchi: load('koshienguchi.json'),
   fukushima: load('fukushima.json'),
   mukomoto: load('mukomoto.json'),
+  noma: load('noma.json'),
 };
 
 // 開業年(data/years.txt: 1行に「id|年|月」)を反映
