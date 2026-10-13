@@ -408,6 +408,8 @@ const KIND = {
   meat:  {t:'🥩 お肉屋',  p:'肉'},
   sento: {t:'♨ 銭湯',    p:'湯'}
 };
+// 銭湯・お肉屋など、飲食店として並べない店(昼夜・価格帯・席・安うまの印を出さない)
+const nonFood = s => s.kind === 'sento' || s.kind === 'meat';
 function kindTag(s){ return KIND[s.kind] ? `<span class="tag k-${s.kind}">${KIND[s.kind].t}</span>` : ''; }
 // 推しの機能を使わないエリア(noVote)と、見るだけ版では、誰の推しかを出さない
 function noVote(){ return VIEW || !!AREAS[area].noVote; }
@@ -424,7 +426,7 @@ function openedText(s){
 }
 function rateNum(s){ return s.gRating ?? null; }
 // 安うま:Googleの評価4.3以上(口コミ20件以上)で、1人3,000円以内に収まる店
-function yasuuma(s){ if (s.yu === true) return true;  // りんのおすすめで個別に安うま扱いにした店
+function yasuuma(s){ if (nonFood(s)) return false; if (s.yu === true) return true;  // りんのおすすめで個別に安うま扱いにした店
   const p = priceOf(s); return s.gRating >= 4.3 && (s.gReviews||0) >= 20 && p && (p.k==='p1' || p.k==='p2'); }
 function menuImg(s){ return 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(s.name.replace(/(.*?)/g,'') + ' ' + AREAS[area].label.replace(/.*・/,'') + ' メニュー'); }
 // Googleマップのお店のページ(メニュー・写真・クチコミのタブがある)を開く。店名で1件に絞れない店は gq(Google上の正式名)で検索
@@ -535,7 +537,7 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':`<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span>`}<span class="tag g">${esc(s.genre)}</span>${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,false)+dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${s.note?`<span class="tag note">ひとこと</span>`:''}${esc(s.note || s.catch || s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -553,7 +555,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `${kindTag(s)}${recTag(s)}<span class="tag ${s.type}">${SLOT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${smokeTag(s,true)}${dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
+  $('#sh-sub').innerHTML = `${kindTag(s)}${recTag(s)}${nonFood(s)?'':`<span class="tag ${s.type}">${SLOT[s.type]}</span>`}<span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,true)+dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
   const score = [
     s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
                    : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
