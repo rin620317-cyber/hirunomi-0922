@@ -391,7 +391,9 @@ function dayTag(s){ if (AREAS[area].noDate) return ''; const d = D922[s.d922] ||
 // 見るだけ版で、作った人(りん)のおすすめの店に印をつける
 const REC = PAGE.owner + '推し';
 function recTag(s){ return SOLO && s.rec ? `<span class="tag rec">${esc(REC)}</span>` : ''; }
-function wantsOf(id){ return (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
+// 推しの機能を使わないエリア(noVote)と、見るだけ版では、誰の推しかを出さない
+function noVote(){ return VIEW || !!AREAS[area].noVote; }
+function wantsOf(id){ return noVote() ? [] : (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
 // ★りんのイチオシは「シンプルに」の要望で表示をやめた(データの仕組みは残してある)
 const PICKS_ON = false;
 function pickOf(id){ return PICKS_ON && Object.prototype.hasOwnProperty.call(shared.picks, id) ? shared.picks[id] : null; }
@@ -519,7 +521,7 @@ function drawList(){
   const A = AREAS[area];
   $('#mine-n').textContent = me ? A.shops.filter(s=>wantsOf(s.id).includes(me)).length : 0;
   drawMembers();
-  if (SOLO && !VIEW) $('#tab-team').hidden = !group;  // みんな推しは共有コードに参加しているときだけ
+  if (SOLO && !VIEW) $('#tab-team').hidden = !group || noVote();  // みんな推しは共有コードに参加しているときだけ
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
   if (VIEW || A.home) { $('#foot').textContent = `${A.label}:${A.shops.length}店(昼 ${A.shops.filter(s=>s.type==='lunch').length}・夜 ${A.shops.filter(s=>s.type==='night').length})。評価はGoogleマップ、${A.asof}時点の調べ。距離は直線距離の目安。行く前に営業時間を確認してください。`; return; }
@@ -536,7 +538,7 @@ function detail(s){
     s.budget ? `<div><div class="big" style="font-size:18px">${esc(s.budget)}</div><div class="src">予算の目安</div></div>` : ''
   ].join('');
   const mine = me && w.includes(me);
-  const vote = VIEW ? '' : SOLO ? `<div class="vote">
+  const vote = noVote() ? '' : SOLO ? `<div class="vote">
       <div class="row"><button class="vbtn" id="vote-btn" style="--c:${COLOR[me]}" aria-pressed="${mine}">${mine?'✓ 推し!(取り消す)':'推し!'}</button></div>
       ${group ? `<div class="row">${MEMBERS.map(m=>`<span class="mem${w.includes(m.name)?' on':''}" style="--c:${m.c}"><i></i>${esc(m.name)}</span>`).join('')}</div>`
               : `<div class="row" style="font-size:12px;color:var(--muted)">推しはこのスマホだけに保存されます。<button class="sbtn" id="vote-share" style="font-size:12px;padding:3px 10px">仲間と共有する</button></div>`}
@@ -597,6 +599,11 @@ function setArea(a){
   const A = AREAS[a];
   // 日程未定のエリアでは「9/22営業見込み」のチップを隠す。作った人の推しの印がある店があれば、そのチップを出す
   $('#f-open').hidden = !!A.noDate; if (A.noDate) filters.delete('open');
+  // 推しを使わないエリアでは、推しのタブとチップを隠す(開いていたら一覧に戻す)
+  const nv = noVote();
+  $('#tab-mine').hidden = nv; $('#f-want').hidden = nv; if (nv) filters.delete('want');
+  $('#tab-team').hidden = nv || (SOLO && !group);
+  if (nv && tab !== 'all') { tab = 'all'; who = null; document.querySelectorAll('.tabs button[data-tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === 'all')); }
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
   drawChips();
   drawBase(); drawPins(); drawList();
