@@ -176,6 +176,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <button class="chip out" id="f-out" aria-pressed="false">食事中心の店も表示</button>
     <select class="sortsel" id="sort" aria-label="並び順">
       <option value="num">番号順</option>
+      <option value="near" id="sort-near" hidden>自宅から近い順</option>
       <option value="votes">推しが多い順</option>
       <option value="price">安い順</option>
       <option value="rate">評価が高い順</option>
@@ -465,6 +466,7 @@ function visible(){
   if (sort==='votes') list = [...list].sort((a,b)=> wantsOf(b.id).length - wantsOf(a.id).length || byPick(a,b) || a.no-b.no);
   if (sort==='price') list = [...list].sort((a,b)=> ((priceOf(a)||{hi:1e9}).hi - (priceOf(b)||{hi:1e9}).hi) || ((priceOf(a)||{lo:1e9}).lo - (priceOf(b)||{lo:1e9}).lo));
   if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
+  if (sort==='near')  list = [...list].sort((a,b)=> (distOf(a) ?? 1e9) - (distOf(b) ?? 1e9) || a.no-b.no);
   if (sort==='genre') list = [...list].sort((a,b)=> a.genre.localeCompare(b.genre,'ja'));
   return list;
 }
@@ -600,7 +602,12 @@ function setArea(a){
   // 日程未定のエリアでは「9/22営業見込み」のチップを隠す。作った人の推しの印がある店があれば、そのチップを出す
   $('#f-open').hidden = !!A.noDate; if (A.noDate) filters.delete('open');
   // 推しを使わないエリアでは、推しのタブとチップを隠す(開いていたら一覧に戻す)
+  // 「自宅から近い順」は自宅があるエリアだけ選べる
+  $('#sort-near').hidden = !A.home;
+  if (!A.home && sort === 'near') { sort = 'num'; $('#sort').value = 'num'; }
   const nv = noVote();
+  $('#sort').querySelector('option[value="votes"]').hidden = nv;
+  if (nv && sort === 'votes') { sort = 'num'; $('#sort').value = 'num'; }
   $('#tab-mine').hidden = nv; $('#f-want').hidden = nv; if (nv) filters.delete('want');
   $('#tab-team').hidden = nv || (SOLO && !group);
   if (nv && tab !== 'all') { tab = 'all'; who = null; document.querySelectorAll('.tabs button[data-tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === 'all')); }
