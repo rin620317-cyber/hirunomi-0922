@@ -121,10 +121,19 @@ header.top{position:sticky;top:0;z-index:1500}
 .tag.k-togo{background:#f0a33c;color:#3d2300}
 .tag.k-meat{background:#e64980;color:#fff}
 .tag.k-sento{background:#1c7ed6;color:#fff}
-.pin-kind{position:absolute;right:-11px;top:-8px;width:17px;height:17px;border-radius:50%;font-size:10px;font-weight:700;font-style:normal;display:grid;place-items:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
-.pin-kind.k-togo{background:#f0a33c;color:#3d2300}
-.pin-kind.k-meat{background:#e64980;color:#fff}
-.pin-kind.k-sento{background:#1c7ed6;color:#fff}
+.tag.k-eatin{background:#d3f9d8;color:#1b5e20}
+.pin.box{border-radius:9px;transform:none;width:30px;height:30px}
+.pin.box span{transform:none;font-size:16px;line-height:1}
+.pin.box.sel{transform:scale(1.3)}
+.num.box{border-radius:7px;font-size:15px;line-height:1}
+.pin.k-togo,.num.k-togo{background:#f0a33c}
+.pin.k-meat,.num.k-meat{background:#e64980}
+.pin.k-sento,.num.k-sento{background:#1c7ed6}
+.group-h{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;padding:10px 2px 4px;border-bottom:2px solid var(--line);color:var(--ink)}
+.group-h i{font-style:normal;display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;color:#fff;font-size:13px}
+.group-h small{font-weight:400;color:var(--muted);font-size:11px}
+.group-h.k-eatin i{background:#2f9e44}.group-h.k-togo i{background:#f0a33c}.group-h.k-meat i{background:#e64980}.group-h.k-sento i{background:#1c7ed6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.k-eatin{background:#1e4620;color:#d3f9d8}}
 .callout.note{background:#fff0f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.note{background:#5a1430;color:#ffd9e5}:root:not([data-theme="light"]) .callout.note{background:#33121f}}
 .stn.home{background:#2f6fdd}
@@ -170,6 +179,7 @@ header.top{position:sticky;top:0;z-index:1500}
   <div class="filters" id="filters">
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
     <button class="chip" id="f-rec" data-f="rec" aria-pressed="false" hidden></button>
+    <button class="chip" id="f-eatin" data-f="eatin" aria-pressed="false" hidden>🍽 店内</button>
     <button class="chip" id="f-togo" data-f="togo" aria-pressed="false" hidden>🥡 持ち帰り</button>
     <button class="chip" id="f-meat" data-f="meat" aria-pressed="false" hidden>🥩 お肉屋</button>
     <button class="chip" id="f-sento" data-f="sento" aria-pressed="false" hidden>♨ 銭湯</button>
@@ -287,6 +297,7 @@ function slotOf(s){
 const SLOT = {lunch:'昼から開店(〜16:59)', night:'夜から開店(17時〜)'};
 const SLOT_SHORT = {lunch:'昼', night:'夜'};
 for (const k in AREAS) AREAS[k].shops.forEach(s => { s.type = slotOf(s); });
+for (const k in AREAS) if (AREAS[k].shops.some(s => s.kind)) AREAS[k].shops.forEach(s => { if (!s.kind) s.kind = 'eatin'; });
 // 1人5,000円を上回る店(予算の目安の真ん中が5,000円超)は載せない
 for (const k in AREAS) AREAS[k].shops = AREAS[k].shops.filter(s => { const p = priceOf(s); return !p || (p.lo+p.hi)/2 <= 5000; });
 for (const k in AREAS) { AREAS[k].shops.sort((a,b)=>(a.fit===false)-(b.fit===false)); AREAS[k].shops.forEach((s,i)=>{ s.no = i+1; }); }
@@ -403,11 +414,17 @@ function dayTag(s){ if (AREAS[area].noDate) return ''; const d = D922[s.d922] ||
 const REC = PAGE.owner + '推し';
 function recTag(s){ return SOLO && s.rec ? `<span class="tag rec">${esc(REC)}</span>` : ''; }
 // 飲食店以外・持ち帰り専門など、ひと目でわかるようにする種類
+// 店内で食べられる店はいつもの番号つきのピン、それ以外は色と形を変えて絵文字で出す
 const KIND = {
-  togo:  {t:'🥡 持ち帰り', p:'持'},   // 店内で食べる席がない
-  meat:  {t:'🥩 お肉屋',  p:'肉'},
-  sento: {t:'♨ 銭湯',    p:'湯'}
+  eatin: {t:'🍽 店内',     h:'店内で食べられる店',       e:''},
+  togo:  {t:'🥡 持ち帰り', h:'持ち帰り専門(弁当・パン)', e:'🥡'},
+  meat:  {t:'🥩 お肉屋',   h:'お肉屋さん',               e:'🥩'},
+  sento: {t:'♨ 銭湯',     h:'銭湯',                     e:'♨'}
 };
+const KORD = Object.fromEntries(Object.keys(KIND).map((k,i) => [k,i]));
+const hasKinds = () => AREAS[area].shops.some(s => s.kind && s.kind !== 'eatin');
+// 番号の丸(一覧)とピン(地図)。種類のある店は色つきの四角に絵文字
+function numHtml(s){ const k = KIND[s.kind]; return k && k.e ? `<span class="num box k-${s.kind}">${k.e}</span>` : `<span class="num ${s.type}">${s.no}</span>`; }
 // 銭湯・お肉屋など、飲食店として並べない店(昼夜・価格帯・席・安うまの印を出さない)
 const nonFood = s => s.kind === 'sento' || s.kind === 'meat';
 function kindTag(s){ return KIND[s.kind] ? `<span class="tag k-${s.kind}">${KIND[s.kind].t}</span>` : ''; }
@@ -456,6 +473,7 @@ function drawBase(){
 // 選んだチップの条件。昼と夜は「どちらか」、それ以外は「すべて満たす」
 const CHIP = {
   rec:   s => !!s.rec,
+  eatin: s => s.kind === 'eatin',
   togo:  s => s.kind === 'togo',
   meat:  s => s.kind === 'meat',
   sento: s => s.kind === 'sento',
@@ -472,7 +490,10 @@ const CHIP = {
 function chipOk(s){
   const times = ['lunch','night'].filter(t => filters.has(t));
   if (times.length && !times.includes(s.type)) return false;
-  for (const k of filters) if (CHIP[k] && !CHIP[k](s)) return false;
+  // 種類(店内・持ち帰り・お肉屋・銭湯)も「どれか」
+  const kinds = Object.keys(KIND).filter(k => filters.has(k));
+  if (kinds.length && !kinds.includes(s.kind)) return false;
+  for (const k of filters) if (!KIND[k] && CHIP[k] && !CHIP[k](s)) return false;
   return true;
 }
 function visible(){
@@ -490,6 +511,7 @@ function visible(){
   if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
   if (sort==='near')  list = [...list].sort((a,b)=> (distOf(a) ?? 1e9) - (distOf(b) ?? 1e9) || a.no-b.no);
   if (sort==='genre') list = [...list].sort((a,b)=> a.genre.localeCompare(b.genre,'ja'));
+  if (hasKinds()) list = [...list].sort((a,b) => (KORD[a.kind] ?? 9) - (KORD[b.kind] ?? 9));
   return list;
 }
 
@@ -498,7 +520,7 @@ function drawPins(){
   visible().forEach(s => {
     if (s.lat==null) return;
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${KIND[s.kind]?`<i class="pin-kind k-${s.kind}">${KIND[s.kind].p}</i>`:''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
+    const html = `<div class="pin-wrap">${KIND[s.kind]&&KIND[s.kind].e ? `<div class="pin box k-${s.kind}${s.id===selId?' sel':''}"><span>${KIND[s.kind].e}</span></div>` : `<div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>`}${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
     const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
     m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
     m.on('click', () => select(s.id, false));
@@ -531,10 +553,14 @@ function emptyHint(){
 }
 function drawList(){
   const list = visible();
+  const grouped = hasKinds(); let prevK = null;
+  const cnt = k => list.filter(x => x.kind === k).length;
   $('#list').innerHTML = (list.length ? list.map(s => {
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    return `<button class="item${s.id===selId?' sel':''}" id="it-${s.id}" data-id="${s.id}">
-      <span class="num ${s.type}">${s.no}</span>
+    const head = grouped && s.kind !== prevK ? `<div class="group-h k-${s.kind}"><i>${KIND[s.kind].e || '🍽'}</i>${esc(KIND[s.kind].h)}<small>${cnt(s.kind)}件</small></div>` : '';
+    prevK = s.kind;
+    return head + `<button class="item${s.id===selId?' sel':''}" id="it-${s.id}" data-id="${s.id}">
+      ${numHtml(s)}
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
       <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':`<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span>`}<span class="tag g">${esc(s.genre)}</span>${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,false)+dayTag(s)}${short(s.hoursShort||s.hours)}</span>
@@ -548,7 +574,7 @@ function drawList(){
   if (SOLO && !VIEW) $('#tab-team').hidden = !group || noVote();  // みんな推しは共有コードに参加しているときだけ
   $('#team-n').textContent = A.shops.filter(s=>wantsOf(s.id).length || pickOf(s.id)!==null).length;
   const fit = A.shops.filter(s=>s.fit!==false);
-  if (VIEW || A.home) { $('#foot').textContent = `${A.label}:${A.shops.length}店(昼 ${A.shops.filter(s=>s.type==='lunch').length}・夜 ${A.shops.filter(s=>s.type==='night').length})。評価はGoogleマップ、${A.asof}時点の調べ。距離は直線距離の目安。行く前に営業時間を確認してください。`; return; }
+  if (VIEW || A.home) { $('#foot').textContent = `${A.label}:${hasKinds() ? Object.keys(KIND).map(k => [KIND[k].t.replace(/^\S+ /,''), A.shops.filter(s=>s.kind===k).length]).filter(x=>x[1]).map(x=>x[0]+' '+x[1]).join('・') : A.shops.length + '店(昼 ' + A.shops.filter(s=>s.type==='lunch').length + '・夜 ' + A.shops.filter(s=>s.type==='night').length + ')'}。評価はGoogleマップ、${A.asof}時点の調べ。距離は直線距離の目安。行く前に営業時間を確認してください。`; return; }
   $('#foot').textContent = `${A.label}:30〜40代の飲み向け${fit.length}店(昼 ${fit.filter(s=>s.type==='lunch').length}・夜 ${fit.filter(s=>s.type==='night').length})＋食事中心${A.shops.length-fit.length}店。評価はGoogleマップ、${A.asof}時点の調べ。1人5,000円を超える店は載せていません。行く前に電話で確認を。`;
 }
 
@@ -634,11 +660,12 @@ function setArea(a){
   $('#tab-team').hidden = nv || (SOLO && !group);
   if (nv && tab !== 'all') { tab = 'all'; who = null; document.querySelectorAll('.tabs button[data-tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === 'all')); }
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
-  for (const k in KIND) { const b = $('#f-' + k); b.hidden = !A.shops.some(s => s.kind === k); if (b.hidden) filters.delete(k); }
+  for (const k in KIND) { const b = $('#f-' + k), n = A.shops.filter(s => s.kind === k).length; b.hidden = !n || !hasKinds(); b.textContent = KIND[k].t + ' ' + n; if (b.hidden) filters.delete(k); }
   drawChips();
   drawBase(); drawPins(); drawList();
   const pts = A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]);
   if (A.home) pts.push([A.home.lat, A.home.lng]);
+  map.invalidateSize();
   map.fitBounds(pts, {padding:[30,30], maxZoom: A.home ? 16 : 17});
   $('#list').scrollTop = 0;
 }
@@ -901,6 +928,8 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) pull
 
 drawMe();
 setArea(area);
+// 開いた直後は地図の大きさが決まりきっていないことがあるので、表示が落ち着いてからもう一度範囲を合わせる
+window.addEventListener('load', () => setTimeout(() => setArea(area), 50));
 if (SOLO && !group) setSync('', 'この端末だけに保存中(共有していません)');
 else if (API) { setSync('', '読み込み中…'); pull(); }
 else setSync('', 'この端末だけに保存中(共有の設定前)');
