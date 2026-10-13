@@ -148,3 +148,4 @@ n-komameya|200
 n-oubaitouri|200
 n-hikyu|200
 n-saltybonbon|200
+n-yanagiya|200
