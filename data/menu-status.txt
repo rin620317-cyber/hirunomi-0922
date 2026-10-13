@@ -144,3 +144,4 @@ k-onuki|200
 k-3chome|404
 k-tasuki|404
 n-angle|200
+n-komameya|200
