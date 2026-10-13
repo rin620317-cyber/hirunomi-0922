@@ -120,3 +120,4 @@ m-tatchan|2014|1
 m-aina|2022|5
 m-tomato|2021|1
 m-inuma|2023|11
+n-angle|1978
