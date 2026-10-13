@@ -217,7 +217,8 @@
       "url": "https://tabelog.com/hyogo/A2803/A280306/28005758/",
       "gq": "かまどのうた 伊丹",
       "gRating": 4.1,
-      "gReviews": 128
+      "gReviews": 128,
+      "togo": true
     },
     {
       "id": "n-okazu",
@@ -240,7 +241,8 @@
       "url": "https://tabelog.com/hyogo/A2803/A280306/28045106/",
       "gq": "おかず倶楽部 伊丹 桑津",
       "gRating": 4.1,
-      "gReviews": 42
+      "gReviews": 42,
+      "togo": true
     },
     {
       "id": "n-rairaitei",
@@ -308,7 +310,8 @@
       "url": "https://tabelog.com/hyogo/A2803/A280304/28037038/",
       "gq": "あっちゃん弁当武庫之荘店",
       "gRating": 4.2,
-      "gReviews": 293
+      "gReviews": 293,
+      "togo": true
     },
     {
       "id": "n-takeda",
@@ -374,7 +377,8 @@
       "url": "https://tabelog.com/hyogo/A2803/A280306/28027497/",
       "gq": "クランツ本店 伊丹",
       "gRating": 4.4,
-      "gReviews": 214
+      "gReviews": 214,
+      "togo": true
     },
     {
       "id": "n-kitchen-acchan",
