@@ -218,7 +218,7 @@
       "gq": "かまどのうた 伊丹",
       "gRating": 4.1,
       "gReviews": 128,
-      "togo": true
+      "kind": "togo"
     },
     {
       "id": "n-okazu",
@@ -242,7 +242,7 @@
       "gq": "おかず倶楽部 伊丹 桑津",
       "gRating": 4.1,
       "gReviews": 42,
-      "togo": true
+      "kind": "togo"
     },
     {
       "id": "n-rairaitei",
@@ -311,7 +311,7 @@
       "gq": "あっちゃん弁当武庫之荘店",
       "gRating": 4.2,
       "gReviews": 293,
-      "togo": true
+      "kind": "togo"
     },
     {
       "id": "n-takeda",
@@ -378,7 +378,7 @@
       "gq": "クランツ本店 伊丹",
       "gRating": 4.4,
       "gReviews": 214,
-      "togo": true
+      "kind": "togo"
     },
     {
       "id": "n-kitchen-acchan",

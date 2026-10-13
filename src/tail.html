@@ -118,8 +118,13 @@ header.top{position:sticky;top:0;z-index:1500}
 .tag.rec{background:#ffe7a0;color:#5c4200;border-color:#f0c64a}
 .tag.dist{background:#e3edff;color:#1b4b94}
 .tag.note{background:#ffd9e5;color:#8a1f45}
-.tag.togo{background:#f0a33c;color:#3d2300}
-.pin-togo{position:absolute;right:-11px;top:-8px;width:17px;height:17px;border-radius:50%;background:#f0a33c;color:#3d2300;font-size:10px;font-weight:700;font-style:normal;display:grid;place-items:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.tag.k-togo{background:#f0a33c;color:#3d2300}
+.tag.k-meat{background:#e64980;color:#fff}
+.tag.k-sento{background:#1c7ed6;color:#fff}
+.pin-kind{position:absolute;right:-11px;top:-8px;width:17px;height:17px;border-radius:50%;font-size:10px;font-weight:700;font-style:normal;display:grid;place-items:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.pin-kind.k-togo{background:#f0a33c;color:#3d2300}
+.pin-kind.k-meat{background:#e64980;color:#fff}
+.pin-kind.k-sento{background:#1c7ed6;color:#fff}
 .callout.note{background:#fff0f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.note{background:#5a1430;color:#ffd9e5}:root:not([data-theme="light"]) .callout.note{background:#33121f}}
 .stn.home{background:#2f6fdd}
@@ -165,7 +170,9 @@ header.top{position:sticky;top:0;z-index:1500}
   <div class="filters" id="filters">
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
     <button class="chip" id="f-rec" data-f="rec" aria-pressed="false" hidden></button>
-    <button class="chip togo" id="f-togo" data-f="togo" aria-pressed="false" hidden>🥡 持ち帰り</button>
+    <button class="chip" id="f-togo" data-f="togo" aria-pressed="false" hidden>🥡 持ち帰り</button>
+    <button class="chip" id="f-meat" data-f="meat" aria-pressed="false" hidden>🥩 お肉屋</button>
+    <button class="chip" id="f-sento" data-f="sento" aria-pressed="false" hidden>♨ 銭湯</button>
     <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼(〜16:59開店)</button>
     <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜(17時〜開店)</button>
     <button class="chip yu" id="f-yu" data-f="yu" aria-pressed="false">安 安うま</button>
@@ -395,8 +402,13 @@ function dayTag(s){ if (AREAS[area].noDate) return ''; const d = D922[s.d922] ||
 // 見るだけ版で、作った人(りん)のおすすめの店に印をつける
 const REC = PAGE.owner + '推し';
 function recTag(s){ return SOLO && s.rec ? `<span class="tag rec">${esc(REC)}</span>` : ''; }
-// 持ち帰り専門の店(店内で食べる席がない)
-function togoTag(s){ return s.togo ? '<span class="tag togo">🥡 持ち帰り</span>' : ''; }
+// 飲食店以外・持ち帰り専門など、ひと目でわかるようにする種類
+const KIND = {
+  togo:  {t:'🥡 持ち帰り', p:'持'},   // 店内で食べる席がない
+  meat:  {t:'🥩 お肉屋',  p:'肉'},
+  sento: {t:'♨ 銭湯',    p:'湯'}
+};
+function kindTag(s){ return KIND[s.kind] ? `<span class="tag k-${s.kind}">${KIND[s.kind].t}</span>` : ''; }
 // 推しの機能を使わないエリア(noVote)と、見るだけ版では、誰の推しかを出さない
 function noVote(){ return VIEW || !!AREAS[area].noVote; }
 function wantsOf(id){ return noVote() ? [] : (shared.wants[id]||[]).filter(n=>COLOR[n]).sort((a,b)=>MEMBERS.findIndex(m=>m.name===a)-MEMBERS.findIndex(m=>m.name===b)); }
@@ -442,7 +454,9 @@ function drawBase(){
 // 選んだチップの条件。昼と夜は「どちらか」、それ以外は「すべて満たす」
 const CHIP = {
   rec:   s => !!s.rec,
-  togo:  s => !!s.togo,
+  togo:  s => s.kind === 'togo',
+  meat:  s => s.kind === 'meat',
+  sento: s => s.kind === 'sento',
   yu:    s => yasuuma(s),
   want:  s => wantsOf(s.id).length > 0,
   pick:  s => pickOf(s.id) !== null,
@@ -482,7 +496,7 @@ function drawPins(){
   visible().forEach(s => {
     if (s.lat==null) return;
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${s.togo?'<i class="pin-togo">持</i>':''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
+    const html = `<div class="pin-wrap"><div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${KIND[s.kind]?`<i class="pin-kind k-${s.kind}">${KIND[s.kind].p}</i>`:''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
     const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
     m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
     m.on('click', () => select(s.id, false));
@@ -521,7 +535,7 @@ function drawList(){
       <span class="num ${s.type}">${s.no}</span>
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta">${togoTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${priceTag(s)}${seatTag(s)}${smokeTag(s,false)}${dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${s.note?`<span class="tag note">ひとこと</span>`:''}${esc(s.note || s.catch || s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -539,7 +553,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `${togoTag(s)}${recTag(s)}<span class="tag ${s.type}">${SLOT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${smokeTag(s,true)}${dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
+  $('#sh-sub').innerHTML = `${kindTag(s)}${recTag(s)}<span class="tag ${s.type}">${SLOT[s.type]}</span><span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${priceTag(s)}${seatTag(s)}${smokeTag(s,true)}${dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
   const score = [
     s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
                    : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
@@ -618,7 +632,7 @@ function setArea(a){
   $('#tab-team').hidden = nv || (SOLO && !group);
   if (nv && tab !== 'all') { tab = 'all'; who = null; document.querySelectorAll('.tabs button[data-tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === 'all')); }
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
-  $('#f-togo').hidden = !A.shops.some(s => s.togo); if ($('#f-togo').hidden) filters.delete('togo');
+  for (const k in KIND) { const b = $('#f-' + k); b.hidden = !A.shops.some(s => s.kind === k); if (b.hidden) filters.delete(k); }
   drawChips();
   drawBase(); drawPins(); drawList();
   const pts = A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]);
