@@ -146,3 +146,4 @@ k-tasuki|404
 n-angle|200
 n-komameya|200
 n-oubaitouri|200
+n-hikyu|200
