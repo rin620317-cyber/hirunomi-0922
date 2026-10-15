@@ -333,7 +333,8 @@
       "station": "伊丹市南野北1丁目",
       "gq": "タケダ お好み焼き 伊丹 南野北",
       "gRating": 4.5,
-      "gReviews": 40
+      "gReviews": 40,
+      "slot": "night"
     },
     {
       "id": "n-moncheri",
@@ -1005,5 +1006,6 @@
       "gReviews": 41
     }
   ],
-  "noVote": true
+  "noVote": true,
+  "slots3": true
 }

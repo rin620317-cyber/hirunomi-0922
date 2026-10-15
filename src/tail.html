@@ -122,6 +122,14 @@ header.top{position:sticky;top:0;z-index:1500}
 .tag.k-meat{background:#e64980;color:#fff}
 .tag.k-sento{background:#1c7ed6;color:#fff}
 .tag.k-eatin{background:#d3f9d8;color:#1b5e20}
+/* 自宅周辺など3分類のエリア:昼だけ=黄、終日=青、夜(16時〜)=紫、時間不明=灰 */
+.pin.allday,.num.allday,.dot.ad{background:#2f80ed}
+.tag.allday{background:#e1edff;color:#1c5fc4}
+.slots3 .pin.night,.slots3 .num.night,.slots3 .dot.n{background:#8e44ad}
+.slots3 .tag.night{background:#f3e5fa;color:#7b2e9c}
+.pin.ask,.num.ask,.dot.ak{background:#868e96}
+.tag.ask{background:#f1f3f5;color:#495057}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.allday{background:#17315c;color:#cfe0ff}:root:not([data-theme="light"]) .slots3 .tag.night{background:#3a1d4a;color:#e6c8f5}:root:not([data-theme="light"]) .tag.ask{background:#343a40;color:#ced4da}}
 .pin.box{border-radius:9px;transform:none;width:30px;height:30px}
 .pin.box span{transform:none;font-size:16px;line-height:1}
 .pin.box.sel{transform:scale(1.3)}
@@ -171,7 +179,7 @@ header.top{position:sticky;top:0;z-index:1500}
 
   <div class="mapwrap">
     <div id="map" aria-label="地図"></div>
-    <div class="legend" role="group" aria-label="地図の表示切替(タップでON/OFF)"><button id="lg-lunch" data-lg="lunch" aria-pressed="true"><i class="dot l"></i>昼(〜16:59開店)</button><button id="lg-night" data-lg="night" aria-pressed="true"><i class="dot n"></i>夜(17時〜開店)</button><button id="lg-yu" data-lg="yu" aria-pressed="true"><i class="yu-dot">安</i>安うま</button></div>
+    <div class="legend" role="group" aria-label="地図の表示切替(タップでON/OFF)"><button id="lg-lunch" data-lg="lunch" aria-pressed="true"><i class="dot l"></i>昼(〜16:59開店)</button><button id="lg-allday" data-lg="allday" aria-pressed="true" hidden><i class="dot ad"></i>終日</button><button id="lg-night" data-lg="night" aria-pressed="true"><i class="dot n"></i>夜(17時〜開店)</button><button id="lg-yu" data-lg="yu" aria-pressed="true"><i class="yu-dot">安</i>安うま</button></div>
     <div class="map-note" id="mapnote" hidden></div>
   </div>
   <div class="resizer" id="resizer" role="separator" aria-orientation="horizontal" aria-label="地図と一覧の境目(上下にドラッグで大きさを変える)" tabindex="0"><span></span></div>
@@ -184,6 +192,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <button class="chip" id="f-meat" data-f="meat" aria-pressed="false" hidden>🥩 お肉屋</button>
     <button class="chip" id="f-sento" data-f="sento" aria-pressed="false" hidden>♨ 銭湯</button>
     <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼(〜16:59開店)</button>
+    <button class="chip" id="f-allday" data-f="allday" aria-pressed="false" hidden>終日(昼も夜も)</button>
     <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜(17時〜開店)</button>
     <button class="chip yu" id="f-yu" data-f="yu" aria-pressed="false">安 安うま</button>
     <button class="chip" id="f-p2" data-f="p2" aria-pressed="false">1人3,000円以内</button>
@@ -297,6 +306,27 @@ function slotOf(s){
 const SLOT = {lunch:'昼から開店(〜16:59)', night:'夜から開店(17時〜)'};
 const SLOT_SHORT = {lunch:'昼', night:'夜'};
 for (const k in AREAS) AREAS[k].shops.forEach(s => { s.type = slotOf(s); });
+// 3分類のエリア(slots3):開店時刻と閉店時刻から 昼だけ / 終日(昼も夜も) / 夜(16時以降に開店) に分ける
+// 持ち帰り・お肉屋・銭湯はこの分類の対象外(other)。時間がわからない店は ask。s.slot で個別に指定もできる
+function slot3Of(s){
+  if (s.slot) return s.slot;
+  const src = [s.hoursShort, s.hours].find(v => v && /\d:\d\d\s*[-〜~]/.test(v)) || '';
+  const rs = [...src.matchAll(/(\d{1,2}):(\d{2})\s*[-〜~]\s*(翌)?(\d{1,2}):(\d{2})/g)];
+  if (!rs.length) return 'ask';
+  let start = 1e9, end = 0;
+  for (const m of rs) {
+    const a = +m[1]*60 + +m[2]; let b = +m[4]*60 + +m[5];
+    if (m[3] || b <= a) b += 24*60;
+    start = Math.min(start, a); end = Math.max(end, b);
+  }
+  if (start >= 16*60) return 'night';
+  return end > 17*60 ? 'allday' : 'lunch';
+}
+for (const k in AREAS) if (AREAS[k].slots3) AREAS[k].shops.forEach(s => { s.type = (s.kind && s.kind !== 'eatin') ? 'other' : slot3Of(s); });
+const SLOT3 = {lunch:['昼だけ','昼だけ営業(夕方まで)'], allday:['終日','昼も夜も営業'], night:['夜','夜から開店(16時〜)'], ask:['時間?','営業時間 要確認']};
+const TIMES = ['lunch','allday','night'];
+function slotName(t, long){ if (AREAS[area].slots3) return (SLOT3[t] || ['',''])[long ? 1 : 0]; return (long ? SLOT : SLOT_SHORT)[t] || ''; }
+const slotHide = s => nonFood(s) || s.type === 'other';
 for (const k in AREAS) if (AREAS[k].shops.some(s => s.kind)) AREAS[k].shops.forEach(s => { if (!s.kind) s.kind = 'eatin'; });
 // 1人5,000円を上回る店(予算の目安の真ん中が5,000円超)は載せない
 // (自宅周辺のように自分で選んだ店だけを載せるエリアは除く)
@@ -344,7 +374,7 @@ if (!SOLO && !store.get('hn-seed-v1')) {
   store.set('hn-shared', shared); store.set('hn-seed-v1', true);
 }
 // 地図の凡例のON/OFF(昼・夜は一覧にも効く。★・安は印だけ消す)
-let show = Object.assign({lunch:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
+let show = Object.assign({lunch:true, allday:true, night:true, pick:true, yu:true, ring:true}, store.get('hn-show') || {});
 show.ring = true;  // 徒歩圏の円は常に表示(切替ボタンはなくした)
 
 /* ---------- map ---------- */
@@ -489,7 +519,7 @@ const CHIP = {
   stand: s => s.seat === 'stand' || s.seat === 'both'
 };
 function chipOk(s){
-  const times = ['lunch','night'].filter(t => filters.has(t));
+  const times = TIMES.filter(t => filters.has(t));
   if (times.length && !times.includes(s.type)) return false;
   // 種類(店内・持ち帰り・お肉屋・銭湯)も「どれか」
   const kinds = Object.keys(KIND).filter(k => filters.has(k));
@@ -547,7 +577,7 @@ function emptyHint(){
   if (tab==='team') why.push('「みんな推し」タブ' + (who ? '(' + who + ')' : ''));
   if (filters.size) why.push('チップ「' + [...filters].map(k => document.querySelector('.chip[data-f="'+k+'"]')?.textContent || k).join('・') + '」');
   if (query.trim()) why.push('検索「' + query.trim() + '」');
-  const off = ['lunch','night'].filter(k => show[k]===false).map(k => SLOT_SHORT[k]);
+  const off = TIMES.filter(k => show[k]===false).map(k => slotName(k,false)).filter(Boolean);
   if (off.length) why.push('地図の凡例で ' + off.join('・') + ' をOFF');
   if (!why.length) return '';
   return '<div class="empty">いま ' + why.map(esc).join(' ＋ ') + ' で絞り込み中です。<br><button class="sbtn" id="reset-all">絞り込みをすべて解除</button></div>';
@@ -564,7 +594,7 @@ function drawList(){
       ${numHtml(s)}
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':`<span class="tag ${s.type}">${SLOT_SHORT[s.type]}</span>`}<span class="tag g">${esc(s.genre)}</span>${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,false)+dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${slotHide(s)?'':`<span class="tag ${s.type}">${slotName(s.type,false)}</span>`}<span class="tag g">${esc(s.genre)}</span>${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,false)+dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${s.note?`<span class="tag note">ひとこと</span>`:''}${esc(s.note || s.catch || s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -582,7 +612,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `${kindTag(s)}${recTag(s)}${nonFood(s)?'':`<span class="tag ${s.type}">${SLOT[s.type]}</span>`}<span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,true)+dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
+  $('#sh-sub').innerHTML = `${kindTag(s)}${recTag(s)}${slotHide(s)?'':`<span class="tag ${s.type}">${slotName(s.type,true)}</span>`}<span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,true)+dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
   const score = [
     s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
                    : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
@@ -643,6 +673,23 @@ function select(id, fromList){
   detail(s); $('#sh-body').scrollTop = 0;
 }
 
+// 3分類のエリアとそれ以外で、凡例とチップの文言を切り替える
+const TIME_LABEL = {
+  2: {lunch:['昼(〜16:59開店)','昼(〜16:59開店)'], night:['夜(17時〜開店)','夜(17時〜開店)']},
+  3: {lunch:['昼だけ','昼だけ(夕方まで)'], allday:['終日','終日(昼も夜も)'], night:['夜(16時〜)','夜(16時〜開店)']}
+};
+function drawTimeLabels(){
+  const three = !!AREAS[area].slots3, L = TIME_LABEL[three ? 3 : 2];
+  document.body.classList.toggle('slots3', three);
+  $('#lg-allday').hidden = $('#f-allday').hidden = !three;
+  if (!three) filters.delete('allday');
+  for (const t of ['lunch','allday','night']) {
+    if (!L[t]) continue;
+    const dot = $('#lg-' + t).querySelector('i').outerHTML;
+    $('#lg-' + t).innerHTML = dot + L[t][0];
+    $('#f-' + t).textContent = L[t][1];
+  }
+}
 function setArea(a){
   area = a; selId = null; store.set('hn-area2', a);
   $('#area-sel').value = a;
@@ -662,6 +709,7 @@ function setArea(a){
   if (nv && tab !== 'all') { tab = 'all'; who = null; document.querySelectorAll('.tabs button[data-tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === 'all')); }
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
   for (const k in KIND) { const b = $('#f-' + k), n = A.shops.filter(s => s.kind === k).length; b.hidden = !n || !hasKinds(); b.textContent = KIND[k].t + ' ' + n; if (b.hidden) filters.delete(k); }
+  drawTimeLabels(); drawLegend();
   drawChips();
   drawBase(); drawPins(); drawList();
   const pts = A.shops.filter(s=>s.lat!=null).map(s=>[s.lat,s.lng]).concat([A.center]);
@@ -835,7 +883,7 @@ document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('clic
   else {
     filters.add(k);
     // 時間帯のチップを押したら、凡例でOFFにしていてもその時間帯を表示に戻す
-    if (['lunch','night'].includes(k) && show[k] === false) { show[k] = true; store.set('hn-show', show); drawLegend(); }
+    if (TIMES.includes(k) && show[k] === false) { show[k] = true; store.set('hn-show', show); drawLegend(); }
     // 「3,000円以内」と「2,000円ではしご」は片方だけ
     if (k === 'p1') filters.delete('p2'); if (k === 'p2') filters.delete('p1');
   }
@@ -889,7 +937,7 @@ function drawLegend(){ document.querySelectorAll('.legend button').forEach(b => 
 document.querySelectorAll('.legend button').forEach(b => b.addEventListener('click', e => {
   e.stopPropagation();
   const k = b.dataset.lg; show[k] = !show[k];
-  if (!show.lunch && !show.night) { show[k] = true; toast('昼と夜の両方は消せません'); }
+  if (TIMES.filter(t => !$('#lg-' + t).hidden).every(t => show[t] === false)) { show[k] = true; toast('すべての時間帯は消せません'); }
   store.set('hn-show', show); drawLegend();
   if (k === 'ring') drawBase(); drawPins(); drawList();
 }));
@@ -911,7 +959,7 @@ $('#members').addEventListener('click', e => { const b = e.target.closest('butto
 $('#list').addEventListener('click', e => {
   if (e.target.id !== 'reset-all') return;
   tab = 'all'; who = null; filters.clear(); query = ''; $('#q').value = '';
-  show.lunch = show.night = true; store.set('hn-show', show); drawLegend();
+  show.lunch = show.allday = show.night = true; store.set('hn-show', show); drawLegend();
   document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.tab==='all'));
   drawChips();
   drawPins(); drawList();
