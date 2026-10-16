@@ -481,7 +481,8 @@ function openedText(s){
 }
 function rateNum(s){ return s.gRating ?? null; }
 // 安うま:Googleの評価4.3以上(口コミ20件以上)で、1人3,000円以内に収まる店
-function yasuuma(s){ if (nonFood(s)) return false; if (s.yu === true) return true;  // りんのおすすめで個別に安うま扱いにした店
+// 安い店だけを選んでいるエリア(noYu)では「安うま」の印を出さない
+function yasuuma(s){ if (nonFood(s) || AREAS[area].noYu) return false; if (s.yu === true) return true;  // りんのおすすめで個別に安うま扱いにした店
   const p = priceOf(s); return s.gRating >= 4.3 && (s.gReviews||0) >= 20 && p && (p.k==='p1' || p.k==='p2'); }
 function menuImg(s){ return 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(s.name.replace(/(.*?)/g,'') + ' ' + AREAS[area].label.replace(/.*・/,'') + ' メニュー'); }
 // Googleマップのお店のページ(メニュー・写真・クチコミのタブがある)を開く。店名で1件に絞れない店は gq(Google上の正式名)で検索
@@ -719,6 +720,7 @@ function setArea(a){
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
   { const n = A.shops.filter(s => s.top).length; $('#f-top').hidden = !n; $('#f-top').textContent = '🔥 激推し ' + n; if (!n) filters.delete('top'); }
   for (const k in KIND) { const b = $('#f-' + k), n = A.shops.filter(s => s.kind === k).length; b.hidden = !n || !hasKinds(); b.textContent = KIND[k].t + ' ' + n; if (b.hidden) filters.delete(k); }
+  $('#lg-yu').hidden = $('#f-yu').hidden = !!A.noYu; if (A.noYu) filters.delete('yu');
   drawTimeLabels(); drawLegend();
   drawChips();
   drawBase(); drawPins(); drawList();

@@ -1035,5 +1035,6 @@
     }
   ],
   "noVote": true,
-  "slots3": true
+  "slots3": true,
+  "noYu": true
 }
