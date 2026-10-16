@@ -122,6 +122,10 @@ header.top{position:sticky;top:0;z-index:1500}
 .tag.k-meat{background:#e64980;color:#fff}
 .tag.k-sento{background:#1c7ed6;color:#fff}
 .tag.k-eatin{background:#d3f9d8;color:#1b5e20}
+/* 激推し(実際に行って好きな店) */
+.tag.top{background:#e03131;color:#fff}
+.pin-top{position:absolute;right:-12px;top:-14px;font-size:17px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
+.item.top{border-color:#e03131;box-shadow:inset 3px 0 0 #e03131}
 /* 自宅周辺など3分類のエリア:昼だけ=黄、終日=青、夜(16時〜)=紫、時間不明=灰 */
 .pin.allday,.num.allday,.dot.ad{background:#2f80ed}
 .tag.allday{background:#e1edff;color:#1c5fc4}
@@ -187,6 +191,7 @@ header.top{position:sticky;top:0;z-index:1500}
   <div class="filters" id="filters">
     <button class="chip" id="f-all" data-f="all" aria-pressed="true">すべて</button>
     <button class="chip" id="f-rec" data-f="rec" aria-pressed="false" hidden></button>
+    <button class="chip" id="f-top" data-f="top" aria-pressed="false" hidden>🔥 激推し</button>
     <button class="chip" id="f-eatin" data-f="eatin" aria-pressed="false" hidden>🍽 店内</button>
     <button class="chip" id="f-togo" data-f="togo" aria-pressed="false" hidden>🥡 持ち帰り</button>
     <button class="chip" id="f-meat" data-f="meat" aria-pressed="false" hidden>🥩 お肉屋</button>
@@ -443,6 +448,8 @@ function seatTag(s){ return s.seat ? `<span class="tag seat ${s.seat}">${SEAT[s.
 function dayTag(s){ if (AREAS[area].noDate) return ''; const d = D922[s.d922] || D922.ask; return `<span class="tag ${d[0]}">${d[1]}</span>`; }
 // 見るだけ版で、作った人(りん)のおすすめの店に印をつける
 const REC = PAGE.owner + '推し';
+// 激推し:実際に行って好きな店
+function topTag(s){ return s.top ? '<span class="tag top">🔥 激推し</span>' : ''; }
 function recTag(s){ return SOLO && s.rec ? `<span class="tag rec">${esc(REC)}</span>` : ''; }
 // 飲食店以外・持ち帰り専門など、ひと目でわかるようにする種類
 // 店内で食べられる店はいつもの番号つきのピン、それ以外は色と形を変えて絵文字で出す
@@ -504,6 +511,7 @@ function drawBase(){
 // 選んだチップの条件。昼と夜は「どちらか」、それ以外は「すべて満たす」
 const CHIP = {
   rec:   s => !!s.rec,
+  top:   s => !!s.top,
   eatin: s => s.kind === 'eatin',
   togo:  s => s.kind === 'togo',
   meat:  s => s.kind === 'meat',
@@ -542,6 +550,7 @@ function visible(){
   if (sort==='rate')  list = [...list].sort((a,b)=> (rateNum(b)??-1) - (rateNum(a)??-1));
   if (sort==='near')  list = [...list].sort((a,b)=> (distOf(a) ?? 1e9) - (distOf(b) ?? 1e9) || a.no-b.no);
   if (sort==='genre') list = [...list].sort((a,b)=> a.genre.localeCompare(b.genre,'ja'));
+  if (sort === 'num') list = [...list].sort((a,b) => (!!b.top) - (!!a.top));
   if (hasKinds()) list = [...list].sort((a,b) => (KORD[a.kind] ?? 9) - (KORD[b.kind] ?? 9));
   return list;
 }
@@ -551,7 +560,7 @@ function drawPins(){
   visible().forEach(s => {
     if (s.lat==null) return;
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
-    const html = `<div class="pin-wrap">${KIND[s.kind]&&KIND[s.kind].e ? `<div class="pin box k-${s.kind}${s.id===selId?' sel':''}"><span>${KIND[s.kind].e}</span></div>` : `<div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>`}${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
+    const html = `<div class="pin-wrap">${KIND[s.kind]&&KIND[s.kind].e ? `<div class="pin box k-${s.kind}${s.id===selId?' sel':''}"><span>${KIND[s.kind].e}</span></div>` : `<div class="pin ${s.type}${s.id===selId?' sel':''}${yasuuma(s)&&show.yu?' yu':''}"><span>${s.no}</span></div>`}${yasuuma(s)&&show.yu?'<i class="pin-yu">安</i>':''}${s.top?'<span class="pin-top">🔥</span>':''}${pk&&show.pick?'<span class="pin-star">★</span>':''}${w.length?`<div class="pin-dots">${w.map(n=>`<b style="background:${COLOR[n]}">${esc(INI[n])}</b>`).join('')}</div>`:''}</div>`;
     const m = L.marker([s.lat,s.lng], {icon:L.divIcon({className:'', html, iconSize:[28,28], iconAnchor:[14,28]}), title:s.name, zIndexOffset: s.id===selId ? 1000 : (pk?500:0) + w.length*50}).addTo(pins);
     m.bindTooltip(s.name, {direction:'top', offset:[0,-26]});
     m.on('click', () => select(s.id, false));
@@ -590,11 +599,11 @@ function drawList(){
     const w = wantsOf(s.id), pk = pickOf(s.id)!==null;
     const head = grouped && s.kind !== prevK ? `<div class="group-h k-${s.kind}"><i>${KIND[s.kind].e || '🍽'}</i>${esc(KIND[s.kind].h)}<small>${cnt(s.kind)}件</small></div>` : '';
     prevK = s.kind;
-    return head + `<button class="item${s.id===selId?' sel':''}" id="it-${s.id}" data-id="${s.id}">
+    return head + `<button class="item${s.id===selId?' sel':''}${s.top?' top':''}" id="it-${s.id}" data-id="${s.id}">
       ${numHtml(s)}
       <span class="nm">${pk?'<span class="star">★</span> ':''}${esc(s.name)}</span>
       ${rateHtml(s)}
-      <span class="meta">${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${slotHide(s)?'':`<span class="tag ${s.type}">${slotName(s.type,false)}</span>`}<span class="tag g">${esc(s.genre)}</span>${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,false)+dayTag(s)}${short(s.hoursShort||s.hours)}</span>
+      <span class="meta">${topTag(s)}${kindTag(s)}${distTag(s)}${recTag(s)}${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${slotHide(s)?'':`<span class="tag ${s.type}">${slotName(s.type,false)}</span>`}<span class="tag g">${esc(s.genre)}</span>${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,false)+dayTag(s)}${short(s.hoursShort||s.hours)}</span>
       <span class="one">${s.fit===false?`<span class="tag out">食事中心:${esc(s.why)}</span>`:''}${s.note?`<span class="tag note">ひとこと</span>`:''}${esc(s.note || s.catch || s.summary)}</span>
       ${w.length||pk?`<span class="who">${pk?'<span class="pick">★りんのイチオシ</span>':''}${people(w)}</span>`:''}
     </button>`;
@@ -612,7 +621,7 @@ function drawList(){
 function detail(s){
   const w = wantsOf(s.id), pk = pickOf(s.id);
   $('#sh-title').textContent = s.name;
-  $('#sh-sub').innerHTML = `${kindTag(s)}${recTag(s)}${slotHide(s)?'':`<span class="tag ${s.type}">${slotName(s.type,true)}</span>`}<span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,true)+dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
+  $('#sh-sub').innerHTML = `${topTag(s)}${kindTag(s)}${recTag(s)}${slotHide(s)?'':`<span class="tag ${s.type}">${slotName(s.type,true)}</span>`}<span class="tag g">${esc(s.genre)}</span>${yasuuma(s)?'<span class="tag yu">安うま</span>':''}${nonFood(s)?'':priceTag(s)+seatTag(s)+smokeTag(s,true)+dayTag(s)} ${esc(s.station||'')}${s.year?` ・${s.year}年開業`:''}`;
   const score = [
     s.gRating!=null ? `<div><div class="big"><span class="star">★</span>${s.gRating.toFixed(1)}</div><div class="src">Googleマップ(口コミ${s.gReviews||0}件)</div></div>`
                    : `<div><div class="big" style="font-size:16px">評価 —</div><div class="src">Googleで見つからず</div></div>`,
@@ -708,6 +717,7 @@ function setArea(a){
   $('#tab-team').hidden = nv || (SOLO && !group);
   if (nv && tab !== 'all') { tab = 'all'; who = null; document.querySelectorAll('.tabs button[data-tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === 'all')); }
   $('#f-rec').hidden = !(SOLO && A.shops.some(s => s.rec)); if ($('#f-rec').hidden) filters.delete('rec');
+  { const n = A.shops.filter(s => s.top).length; $('#f-top').hidden = !n; $('#f-top').textContent = '🔥 激推し ' + n; if (!n) filters.delete('top'); }
   for (const k in KIND) { const b = $('#f-' + k), n = A.shops.filter(s => s.kind === k).length; b.hidden = !n || !hasKinds(); b.textContent = KIND[k].t + ' ' + n; if (b.hidden) filters.delete(k); }
   drawTimeLabels(); drawLegend();
   drawChips();
