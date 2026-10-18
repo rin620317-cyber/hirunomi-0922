@@ -121,6 +121,7 @@ header.top{position:sticky;top:0;z-index:1500}
 .tag.k-togo{background:#f0a33c;color:#3d2300}
 .tag.k-meat{background:#e64980;color:#fff}
 .tag.k-sento{background:#1c7ed6;color:#fff}
+.tag.k-play{background:#12b886;color:#fff}
 .tag.k-eatin{background:#d3f9d8;color:#1b5e20}
 /* 激推し(実際に行って好きな店) */
 .tag.top{background:#e03131;color:#fff}
@@ -141,10 +142,11 @@ header.top{position:sticky;top:0;z-index:1500}
 .pin.k-togo,.num.k-togo{background:#f0a33c}
 .pin.k-meat,.num.k-meat{background:#e64980}
 .pin.k-sento,.num.k-sento{background:#1c7ed6}
+.pin.k-play,.num.k-play{background:#12b886}
 .group-h{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;padding:10px 2px 4px;border-bottom:2px solid var(--line);color:var(--ink)}
 .group-h i{font-style:normal;display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;color:#fff;font-size:13px}
 .group-h small{font-weight:400;color:var(--muted);font-size:11px}
-.group-h.k-eatin i{background:#2f9e44}.group-h.k-togo i{background:#f0a33c}.group-h.k-meat i{background:#e64980}.group-h.k-sento i{background:#1c7ed6}
+.group-h.k-eatin i{background:#2f9e44}.group-h.k-togo i{background:#f0a33c}.group-h.k-meat i{background:#e64980}.group-h.k-sento i{background:#1c7ed6}.group-h.k-play i{background:#12b886}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.k-eatin{background:#1e4620;color:#d3f9d8}}
 .callout.note{background:#fff0f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.note{background:#5a1430;color:#ffd9e5}:root:not([data-theme="light"]) .callout.note{background:#33121f}}
@@ -196,6 +198,7 @@ header.top{position:sticky;top:0;z-index:1500}
     <button class="chip" id="f-togo" data-f="togo" aria-pressed="false" hidden>🥡 持ち帰り</button>
     <button class="chip" id="f-meat" data-f="meat" aria-pressed="false" hidden>🥩 お肉屋</button>
     <button class="chip" id="f-sento" data-f="sento" aria-pressed="false" hidden>♨ 銭湯</button>
+    <button class="chip" id="f-play" data-f="play" aria-pressed="false" hidden>🏓 卓球</button>
     <button class="chip" id="f-lunch" data-f="lunch" aria-pressed="false">昼(〜16:59開店)</button>
     <button class="chip" id="f-allday" data-f="allday" aria-pressed="false" hidden>終日(昼も夜も)</button>
     <button class="chip" id="f-night" data-f="night" aria-pressed="false">夜(17時〜開店)</button>
@@ -457,14 +460,15 @@ const KIND = {
   eatin: {t:'🍽 店内',     h:'店内で食べられる店',       e:''},
   togo:  {t:'🥡 持ち帰り', h:'持ち帰り専門(弁当・パン)', e:'🥡'},
   meat:  {t:'🥩 お肉屋',   h:'お肉屋さん',               e:'🥩'},
-  sento: {t:'♨ 銭湯',     h:'銭湯',                     e:'♨'}
+  sento: {t:'♨ 銭湯',     h:'銭湯',                     e:'♨'},
+  play:  {t:'🏓 卓球',     h:'遊ぶところ(卓球)',         e:'🏓'}
 };
 const KORD = Object.fromEntries(Object.keys(KIND).map((k,i) => [k,i]));
 const hasKinds = () => AREAS[area].shops.some(s => s.kind && s.kind !== 'eatin');
 // 番号の丸(一覧)とピン(地図)。種類のある店は色つきの四角に絵文字
 function numHtml(s){ const k = KIND[s.kind]; return k && k.e ? `<span class="num box k-${s.kind}">${k.e}</span>` : `<span class="num ${s.type}">${s.no}</span>`; }
 // 銭湯・お肉屋など、飲食店として並べない店(昼夜・価格帯・席・安うまの印を出さない)
-const nonFood = s => s.kind === 'sento' || s.kind === 'meat';
+const nonFood = s => s.kind === 'sento' || s.kind === 'meat' || s.kind === 'play';
 function kindTag(s){ return KIND[s.kind] ? `<span class="tag k-${s.kind}">${KIND[s.kind].t}</span>` : ''; }
 // 推しの機能を使わないエリア(noVote)と、見るだけ版では、誰の推しかを出さない
 function noVote(){ return VIEW || !!AREAS[area].noVote; }
@@ -517,6 +521,7 @@ const CHIP = {
   togo:  s => s.kind === 'togo',
   meat:  s => s.kind === 'meat',
   sento: s => s.kind === 'sento',
+  play:  s => s.kind === 'play',
   yu:    s => yasuuma(s),
   want:  s => wantsOf(s.id).length > 0,
   pick:  s => pickOf(s.id) !== null,
